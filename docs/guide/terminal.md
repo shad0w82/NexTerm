@@ -47,6 +47,16 @@ The Console is a **VT100/ANSI terminal**, built on the terminal emulator of Term
 - **Full screen.** The round button in the corner of the terminal hides the header and the bars so that the terminal has the whole window; the same button brings them back. You can drag it where it is not in the way, and NexTerm remembers its place for each orientation.
 - **Scrolling.** Drag to look at what has gone by. With **Autoscroll** on (the default) the Console, Trace and Hex jump to the newest output as it arrives; turn it off in the Settings to stay where you are until you scroll. The **Scrollback** setting says how many lines are kept.
 
+In full screen the terminal has the whole window, and the same round button, now showing arrows that point inwards, brings the header and the bars back.
+
+=== "Phone"
+
+    [![The Console of a phone in full screen, with a full-screen program of the device drawn over the whole window and only the round button that leaves full screen](img/terminal-5-fullscreen.png){ width="300" loading=lazy }](img/terminal-5-fullscreen.png){ target=_blank }
+
+=== "Tablet"
+
+    [![The Console of a tablet in full screen, with a full-screen program of the device drawn over the whole window and only the round button that leaves full screen](img/terminal-5-fullscreen-tablet.png){ loading=lazy }](img/terminal-5-fullscreen-tablet.png){ target=_blank }
+
 ## Trace
 
 Trace lists the traffic as **messages**: a run of bytes that went one way. A message ends at a line feed, or when the data stops for a moment, so a line that the adapter hands over in several pieces is still one message.
