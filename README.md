@@ -5,6 +5,8 @@ with an OTG cable and talk to it: read what it prints, send commands, watch the 
 
 NexTerm is free software, licensed under the GNU General Public License v3.
 
+**Documentation:** <https://shad0w82.github.io/NexTerm/>
+
 ## Features
 
 **Connect**
@@ -57,11 +59,28 @@ is handy for trying the interface without hardware.
 `design/mockup/index.html` is an interactive mockup of the whole interface, at the real sizes of a phone and a
 tablet. Open it in a browser. The app and the mockup are kept in step.
 
+## Documentation
+
+The user documentation is a [Material for MkDocs](https://squidfunk.github.io/mkdocs-material/) site: the pages are
+Markdown files in `docs/`, the settings are in `mkdocs.yml`, and a GitHub Actions workflow builds it and publishes it on
+GitHub Pages when `docs/` changes. To preview it, you need Python 3:
+
+```bash
+python3 -m venv .venv-docs
+.venv-docs/bin/pip install -r mkdocs-require.txt
+.venv-docs/bin/mkdocs serve           # http://127.0.0.1:8000/NexTerm/
+.venv-docs/bin/mkdocs build --strict  # the full build, failing on every warning
+```
+
+The screenshots are taken from the debug build running on a phone emulator and a tablet emulator, by the script in
+`tools/docs_screenshots/` (see its header for how to run it).
+
 ## Project layout
 
 - `app/`: the Android app (Kotlin, Jetpack Compose).
 - `terminal-emulator/`, `terminal-view/`: the Termux terminal modules, with the changes listed in each `NOTICE.md`.
 - `design/mockup/`: the interface mockup.
+- `docs/`, `mkdocs.yml`: the documentation site; `tools/docs_screenshots/`: the script that takes its screenshots.
 
 ## License and credits
 
