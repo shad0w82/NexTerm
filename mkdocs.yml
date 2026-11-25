@@ -1,0 +1,116 @@
+# Documentation of NexTerm: Material for MkDocs, in English, in the colours of the app (dark, with a light option).
+# The pages are the Markdown files in docs/. The title of a page is its H1; only the tabs and groups are named here.
+# The versions to use are in mkdocs-require.txt.
+
+site_name: NexTerm
+site_url: https://shad0w82.github.io/NexTerm/
+site_description: >-
+  NexTerm is a USB serial terminal for Android: plug in a serial adapter or a development board
+  with an OTG cable, read what it prints, send commands and watch the control lines.
+repo_url: https://github.com/shad0w82/NexTerm
+repo_name: shad0w82/NexTerm
+copyright: >-
+  Copyright © 2026 shad0w82 ·
+  <a href="https://github.com/shad0w82/NexTerm/blob/main/LICENSE">GNU GPL v3</a>
+
+theme:
+  name: material
+  language: en
+  custom_dir: overrides
+  font: false              # the text uses the reader's system font; Roboto Mono (code) is served by the site
+  logo: assets/logo.svg
+  favicon: assets/logo.svg
+  icon:
+    repo: fontawesome/brands/github
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.footer
+    - navigation.top
+    - toc.follow
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.tabs.link      # choosing Phone or Tablet on one tab sets it on all the pictures of the page
+  palette:                 # automatic, light and dark, with a switch in the header
+    - media: "(prefers-color-scheme)"
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/brightness-auto
+        name: "Automatic theme: switch to light"
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/brightness-7
+        name: "Light theme: switch to dark"
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/brightness-4
+        name: "Dark theme: switch to automatic"
+
+extra_css:
+  - stylesheets/extra.css
+
+extra_javascript:
+  - javascripts/tables.js
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - def_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.details
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.keys
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+
+validation:
+  nav:
+    omitted_files: info
+    not_found: warn
+    absolute_links: warn
+  links:
+    not_found: warn
+    absolute_links: warn
+    unrecognized_links: warn
+    anchors: warn
+
+plugins:
+  - search
+
+nav:
+  - Home: index.md
+  - Getting started:
+      - start/requirements.md
+      - start/install.md
+      - start/first-connection.md
+  - User guide:
+      - guide/interface.md
+      - guide/home.md
+      - guide/profiles.md
+      - guide/terminal.md
+      - guide/sending.md
+      - guide/control-lines.md
+      - guide/settings.md
+      - guide/phones-and-tablets.md
+  - Reference:
+      - reference/adapters.md
+      - reference/raw-bytes.md
+      - reference/troubleshooting.md
+  - About: about.md

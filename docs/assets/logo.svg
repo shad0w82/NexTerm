@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="14 14 80 80" role="img" aria-label="NexTerm">
+  <rect x="14" y="14" width="80" height="80" rx="18" fill="#16324F"/>
+  <path fill="#E6F1FB" d="M30,32h48a6,6 0 0 1 6,6v32a6,6 0 0 1 -6,6h-48a6,6 0 0 1 -6,-6v-32a6,6 0 0 1 6,-6z"/>
+  <path fill="#16324F" d="M28,42h52v26a4,4 0 0 1 -4,4h-44a4,4 0 0 1 -4,-4z"/>
+  <path fill="#5DCAA5" d="M35,49l3,-3 10,10 -10,10 -3,-3 7,-7z"/>
+  <path fill="#E6F1FB" d="M51,62h14v4h-14z"/>
+  <circle cx="32" cy="37" r="2" fill="#16324F"/>
+  <circle cx="38" cy="37" r="2" fill="#16324F"/>
+</svg>
