@@ -1,0 +1,1611 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NexTerm Mockup</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&family=Roboto+Mono:wght@400;500&family=Material+Symbols+Outlined:wght@300&display=swap">
+<style>
+/* Layout concept: a clickable prototype. Tablet and phone share one app state, are drawn in true Android dp and scaled together. */
+:root {
+  --bg: #F6F7F9; --fg: #14181F; --muted: #566070; --line: #D6DBE3; --chip: #E8EBF0; --link: #0B7A56;
+  --ui: 'Roboto', system-ui, sans-serif;
+  --mono: 'Roboto Mono', ui-monospace, Menlo, monospace;
+  --d-bg: #0D1117; --d-rail: #0A0D12; --d-surface: #161B22; --d-line: #23272E; --d-line2: #30363D;
+  --d-fg: #E6EDF3; --d-mu: #8B949E; --d-green: #10B981; --d-red: #F87171; --d-blue: #3B82F6;
+  --d-bezel: #04060A;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --bg: #0B0E13; --fg: #E6EDF3; --muted: #8B949E; --line: #232A33; --chip: #171C23; --link: #34D399; color-scheme: dark }
+}
+:root[data-theme="dark"] { --bg: #0B0E13; --fg: #E6EDF3; --muted: #8B949E; --line: #232A33; --chip: #171C23; --link: #34D399; color-scheme: dark }
+body { background: var(--bg); color: var(--fg); font-family: var(--ui); margin: 0; padding-block: 28px 48px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.page { max-width: 1560px; margin: 0 auto; }
+h1 { font-size: 24px; font-weight: 500; margin: 0 0 6px; text-wrap: balance; }
+.lead { color: var(--muted); font-size: 15px; line-height: 1.5; max-width: 76ch; margin: 0 0 16px; }
+.bar { display: flex; flex-wrap: wrap; gap: 12px 28px; align-items: center; margin-bottom: 8px; }
+.seg { display: inline-flex; flex-wrap: wrap; background: var(--chip); border-radius: 8px; padding: 3px; }
+.seg button { font: inherit; font-size: 13px; color: var(--muted); background: none; border: 0; border-radius: 6px; padding: 5px 14px; cursor: pointer; white-space: nowrap; }
+.seg button[aria-pressed="true"] { background: var(--bg); color: var(--fg); box-shadow: 0 0 0 1px var(--line); }
+.seg button:focus-visible, .link:focus-visible, .chk input:focus-visible { outline: 2px solid var(--link); outline-offset: 1px; }
+.scale { font-size: 13px; color: var(--muted); font-family: var(--mono); }
+.sim { display: flex; flex-wrap: wrap; gap: 8px 18px; align-items: center; font-size: 13px; color: var(--muted); }
+.chk { display: inline-flex; gap: 7px; align-items: center; cursor: pointer; color: var(--fg); }
+.link { font: inherit; font-size: 13px; color: var(--link); background: none; border: 0; padding: 0; cursor: pointer; text-decoration: underline; }
+.stage { display: flex; flex-wrap: wrap; gap: 32px; align-items: flex-start; justify-content: center; overflow-x: auto; padding: 14px 0 6px; }
+.dev { margin: 0; }
+.box { position: relative; }
+.scaled { position: absolute; left: 0; top: 0; transform-origin: 0 0; }
+figcaption { margin-top: 12px; font-size: 13px; color: var(--muted); line-height: 1.5; width: 0; min-width: 100%; }
+figcaption b { color: var(--fg); font-weight: 500; }
+.rotbtn { display: inline-flex; align-items: center; gap: 6px; margin-left: 6px; vertical-align: middle; font: inherit; font-size: 13px; color: var(--fg); background: var(--chip); border: 1px solid var(--line); border-radius: 8px; padding: 3px 10px 3px 6px; cursor: pointer; }
+.rotbtn .ms { font-size: 18px; }
+.rotbtn:focus-visible { outline: 2px solid var(--link); outline-offset: 1px; }
+.notes { margin-top: 28px; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px 32px; font-size: 14px; line-height: 1.55; color: var(--muted); }
+.notes h2 { font-size: 14px; font-weight: 500; color: var(--fg); margin: 0 0 4px; }
+.notes p { margin: 0; }
+
+.ms { font-family: 'Material Symbols Outlined'; font-weight: 300; font-style: normal; font-size: 24px; line-height: 1; letter-spacing: normal;
+  text-transform: none; display: inline-block; white-space: nowrap; direction: ltr; width: 1em; overflow: hidden; -webkit-font-smoothing: antialiased; font-feature-settings: 'liga'; }
+
+.frame { background: var(--d-bezel); box-sizing: border-box; }
+.frame.tab { width: 1357px; height: 824px; padding: 12px; border-radius: 28px; }
+.frame.ph { width: 416px; height: 906px; padding: 8px; border-radius: 46px; }
+.dv { background: var(--d-bg); color: var(--d-fg); font-family: var(--ui); font-size: 14px; line-height: 1.4; overflow: hidden; display: flex; flex-direction: column; position: relative; }
+.tab .dv { width: 1333px; height: 800px; border-radius: 16px; }
+.ph .dv { width: 400px; height: 890px; border-radius: 38px; }
+.dv button { font-family: inherit; }
+.dv [data-act]:focus-visible { outline: 2px solid var(--d-green); outline-offset: -2px; }
+.dv [data-act] { cursor: pointer; }
+.mono { font-family: var(--mono); }
+.mu { color: var(--d-mu); }
+.good { color: #34D399; }
+.sb { display: flex; align-items: center; justify-content: space-between; color: #C9D1D9; font-size: 12px; font-weight: 500; flex: none; }
+.tab .sb { height: 24px; padding: 0 18px; }
+.ph .sb { height: 34px; padding: 4px 28px 0; }
+.sb .r { display: flex; gap: 4px; align-items: center; }
+.sb .ms { font-size: 15px; }
+.led { width: 8px; height: 8px; border-radius: 50%; background: var(--d-green); display: inline-block; flex: none; }
+.btn { height: 40px; padding: 0 18px; border-radius: 10px; font-size: 14px; font-weight: 500; display: inline-flex; align-items: center; justify-content: center; border: 1px solid var(--d-line2); color: #C9D1D9; background: transparent; white-space: nowrap; line-height: 1; }
+.btn:hover { background: #1B2129; }
+.btn.p { background: var(--d-green); border-color: var(--d-green); color: #06130E; }
+.btn.p:hover { background: #34D399; }
+.btn.x { color: var(--d-red); border-color: #7F1D1D; }
+.btn.s { height: 36px; padding: 0 14px; font-size: 13px; }
+.btn.sqb { width: 48px; height: 48px; padding: 0; background: #0F2E25; border-color: var(--d-green); color: #34D399; }
+.btn.sqb:hover { background: #134035; }
+.btn.sqb.s { width: 60px; height: 60px; padding: 0; }
+.btn.sqb svg { width: 28px; height: 28px; display: block; }
+.btn.sqb .ms { font-size: 28px; }
+.btn.sqb.s svg { width: 30px; height: 30px; }
+.btn.sqb.s .ms { font-size: 30px; }
+.dv .btn:disabled { color: #5B6573; border-color: var(--d-line); background: transparent; cursor: not-allowed; }
+.lnk { font-size: 13px; color: #34D399; background: none; border: 0; padding: 0; margin-top: 8px; text-align: left; }
+.card { background: var(--d-surface); border: 1px solid var(--d-line); border-radius: 12px; }
+.tile .k { font-size: 12px; color: var(--d-mu); }
+.tile .v { font-family: var(--mono); font-weight: 500; color: var(--d-fg); }
+.tile .v.bad { color: var(--d-red); }
+.chart { display: flex; gap: 2px; align-items: stretch; }
+.chart u { flex: 1; display: flex; flex-direction: column; text-decoration: none; }
+.chart div { flex: 1; display: flex; align-items: flex-end; }
+.chart div.dn { align-items: flex-start; }
+.chart em { display: block; width: 100%; background: var(--d-green); border-radius: 1px; }
+.chart div.dn em { background: var(--d-blue); }
+.legend { display: flex; gap: 14px; font-size: 12px; color: var(--d-mu); align-items: center; }
+.legend i { display: inline-block; width: 8px; height: 8px; border-radius: 2px; margin-right: 5px; }
+.row2 { display: flex; align-items: center; justify-content: space-between; }
+.row2 b { font-size: 14px; font-weight: 500; }
+.lbl { font-size: 13px; font-weight: 500; color: var(--d-mu); }
+.lbl.ghost { visibility: hidden; }
+.foot { font-size: 13px; color: var(--d-mu); }
+.chip { border: 1px solid var(--d-green); color: #34D399; border-radius: 999px; padding: 2px 10px; font-size: 12px; white-space: nowrap; }
+.chip.no { border: 1px dashed #4B5563; color: var(--d-mu); }
+.ph .rw .chip { display: inline-block; max-width: 100%; overflow: hidden; text-overflow: ellipsis; vertical-align: top; }
+.banner { display: flex; gap: 12px; align-items: center; padding: 10px 14px; border: 1px solid #6B4E0B; background: #2A210A; color: #F5C969; border-radius: 10px; font-size: 13px; }
+.banner .lnk { margin: 0; color: #F5C969; text-decoration: underline; }
+
+.lst { overflow: hidden; }
+.lst .rw { display: flex; align-items: center; gap: 14px; padding: 8px 16px; min-height: 64px; box-sizing: border-box; border-top: 1px solid var(--d-line); }
+.lst .rw:first-child { border-top: 0; }
+.lst .rw .ms { flex: none; }
+.lst .rw::after, .sess.tog::after { font-family: 'Material Symbols Outlined'; font-weight: 300; font-size: 22px; line-height: 1; width: 1em; overflow: hidden; color: var(--d-mu); flex: none; white-space: nowrap; font-feature-settings: 'liga'; }
+.lst .rw::after { content: "expand_more"; }
+.lst .rw.open::after { content: "expand_less"; }
+.sess.tog::after { content: "expand_more"; }
+.sess.tog.open::after { content: "expand_less"; }
+.lst .rw.sel { background: #12201C; box-shadow: inset 3px 0 0 var(--d-green); }
+.lst .rw:hover, .sess.tog:hover { background: #151B22; }
+.lst .rw.sel:hover { background: #12201C; }
+.sessbox { overflow: hidden; }
+.acc { padding: 6px 20px 18px 54px; background: #12161D; border-top: 1px solid var(--d-line); }
+.sessbox .acc { padding-left: 48px; }
+.accsep { border-top: 1px solid var(--d-line); }
+.chart.dim { opacity: .5; }
+.led.hollow { background: none; border: 1.5px solid var(--d-mu); box-sizing: border-box; }
+.accact { display: flex; align-items: center; gap: 12px; margin-top: 12px; font-size: 12px; }
+.kvs .r { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; padding: 9px 0; border-top: 1px solid var(--d-line); font-size: 14px; }
+.kvs .r:first-child { border-top: 0; }
+.kvs .r span:first-child { color: var(--d-mu); font-size: 13px; flex: none; }
+.kvs .r span:last-child { text-align: right; }
+.kv2 { display: grid; grid-template-columns: 1fr 1fr; column-gap: 56px; }
+.kv2 .r:nth-child(-n+2) { border-top: 0; }
+.selrow { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; padding: 6px 0 10px; font-size: 14px; }
+.selrow > span:first-child { color: var(--d-mu); font-size: 13px; line-height: 36px; }
+.selcol { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+.selcol > :first-child { min-height: 36px; display: flex; align-items: center; }
+.sum { font-size: 12px; }
+.dv select { height: 36px; background: var(--d-bg); color: var(--d-fg); border: 1px solid var(--d-line2); border-radius: 8px; padding: 0 10px; font: inherit; font-size: 13px; min-width: 190px; color-scheme: dark; }
+.empty { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 8px; padding: 28px 24px; border: 1px dashed var(--d-line2); border-radius: 12px; }
+.empty .ms { font-size: 40px; color: var(--d-mu); }
+.empty b { font-size: 16px; font-weight: 500; }
+.empty p { margin: 0; font-size: 13px; color: var(--d-mu); max-width: 360px; line-height: 1.5; }
+.hold { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; text-align: center; color: var(--d-mu); border: 1px dashed var(--d-line2); border-radius: 12px; padding: 24px; }
+.hold .ms { font-size: 36px; }
+.hold b { font-size: 16px; font-weight: 500; color: var(--d-fg); }
+.hold p { margin: 0; font-size: 13px; max-width: 320px; line-height: 1.5; }
+
+.tab .body { flex: 1; display: flex; min-height: 0; }
+.rail { width: 80px; background: var(--d-rail); border-right: 1px solid var(--d-line); display: flex; flex-direction: column; padding: 8px 0; flex: none; }
+.rail .it { width: 100%; height: 64px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: var(--d-mu); font-size: 11px; position: relative; background: none; border: 0; }
+.short .rail { width: 64px; }
+.rail .it:hover { background: #10151B; }
+.rail .it.on { color: var(--d-green); background: #10201C; }
+.rail .it.on::before { content: ""; position: absolute; left: 0; top: 12px; bottom: 12px; width: 3px; background: var(--d-green); border-radius: 0 2px 2px 0; }
+.ico { position: relative; display: block; height: 24px; }
+.ico .led { position: absolute; top: -1px; right: -3px; box-shadow: 0 0 0 2px var(--d-rail); }
+.rail .it.on .ico .led { box-shadow: 0 0 0 2px #10201C; }
+.tab .main { flex: 1; min-width: 0; padding: 20px 32px; display: flex; flex-direction: column; gap: 16px; overflow: auto; }
+.tab .ttl { display: flex; align-items: center; gap: 12px; }
+.tab .ttl b { font-size: 22px; font-weight: 500; }
+.tab .sess { padding: 18px 20px; display: flex; align-items: center; gap: 16px; }
+.tab .sess .led { width: 12px; height: 12px; }
+.tab .sess .nm { font-size: 18px; font-weight: 500; }
+.tab .sess .dt { font-size: 13px; }
+.tab .stats { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; }
+.med .stats { grid-template-columns: repeat(3, 1fr); }
+.short .main { padding: 14px 24px; gap: 12px; }
+.tab .tile { padding: 14px 16px; }
+.tab .tile .v { font-size: 20px; margin-top: 2px; }
+.tab .tr { padding: 14px 16px 12px; }
+.tab .tr .chart { height: 120px; margin-top: 10px; }
+.tab .tr .axis { display: flex; justify-content: space-between; font-size: 11px; color: var(--d-mu); margin-top: 6px; font-family: var(--mono); }
+
+.ph .hdr { height: 56px; display: flex; align-items: center; padding: 0 8px 0 16px; flex: none; }
+.ph .hdr b { font-size: 20px; font-weight: 500; flex: 1; }
+.ph .hdr .gear { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; color: var(--d-fg); background: none; border: 0; }
+.ph .hdr.pg { padding-left: 8px; gap: 4px; }
+.ph .content { flex: 1; padding: 4px 16px 16px; display: flex; flex-direction: column; gap: 12px; min-height: 0; overflow: auto; }
+.ph .sess { padding: 14px 16px; display: flex; align-items: center; gap: 12px; }
+.ph .sess .nm { font-size: 16px; font-weight: 500; }
+.ph .sess .dt { font-size: 12px; }
+.ph .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.ph .tile { padding: 8px 12px; }
+.ph .tile .v { font-size: 18px; margin-top: 0; }
+.ph .tr { padding: 10px 14px; }
+.ph .tr .chart { height: 60px; margin-top: 6px; }
+.ph .content > *, .tab .main > * { flex-shrink: 0; }
+.ph .content, .tab .main { scrollbar-width: none; }
+.ph .content::-webkit-scrollbar, .tab .main::-webkit-scrollbar { display: none; }
+.sthumb { position: absolute; right: 3px; width: 3px; border-radius: 2px; background: #4B5563; pointer-events: none; z-index: 2; }
+.ph .acts { display: flex; gap: 10px; }
+.ph .stk { display: flex; flex-direction: column; gap: 10px; }
+.ph .acts .btn { flex: 1; padding: 0 8px; }
+.ph .lst .rw { padding: 12px 14px; gap: 12px; min-height: 0; }
+.ph .acc, .ph .sessbox .acc { padding: 6px 14px 14px; }
+.ph .kv2 { grid-template-columns: 1fr; }
+.ph .kv2 .r:nth-child(2) { border-top: 1px solid var(--d-line); }
+.ph .accact { flex-direction: column; align-items: stretch; gap: 8px; }
+.ph .accact .btn { width: 100%; }
+.ph .selrow select { min-width: 0; width: 220px; max-width: 100%; }
+.ph .kvs .r { padding: 8px 0; }
+.ph .kvs .mono { font-size: 12px; }
+.ph .empty { padding: 24px 18px; }
+.bt { height: 64px; display: flex; background: var(--d-rail); border-top: 1px solid var(--d-line); flex: none; }
+.bt .it { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; color: var(--d-mu); font-size: 11px; background: none; border: 0; position: relative; }
+.bt .it.on { color: var(--d-green); }
+.bt.nl { height: 56px; }
+.rail.nl .it { height: 56px; }
+.bt .ico .led { box-shadow: 0 0 0 2px var(--d-rail); }
+.gest { height: 24px; background: var(--d-rail); display: flex; align-items: center; justify-content: center; flex: none; }
+.gest i { width: 120px; height: 4px; border-radius: 2px; background: #6B7280; }
+
+.scrim { position: absolute; inset: 0; background: rgba(0,0,0,.6); display: flex; align-items: center; justify-content: center; z-index: 5; }
+.ph .scrim { align-items: flex-end; }
+.sheet { background: var(--d-surface); border: 1px solid var(--d-line2); border-radius: 16px; padding: 20px 22px; width: 460px; display: flex; flex-direction: column; gap: 10px; max-height: calc(100% - 40px); overflow: auto; scrollbar-width: none; box-sizing: border-box; }
+.ph .sheet { max-height: 94%; width: calc(100% - 16px); margin: 0 8px 8px; border-radius: 22px; padding: 20px 16px 20px; box-sizing: border-box; }
+.fld { display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; border: 1px solid var(--d-line2); border-radius: 8px; font-size: 14px; }
+.fld span:first-child { color: var(--d-mu); font-size: 13px; font-family: var(--ui); }
+.swrow { display: flex; align-items: center; justify-content: space-between; font-size: 14px; }
+.sw { width: 44px; height: 26px; border-radius: 13px; background: #374151; border: 0; position: relative; padding: 0; }
+.sw::after { content: ""; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%; background: #E6EDF3; }
+.sw.on { background: var(--d-green); }
+.sw.on::after { left: 21px; }
+.toast { position: absolute; left: 50%; bottom: 28px; transform: translateX(-50%); background: #2D333B; border: 1px solid var(--d-line2); color: var(--d-fg); padding: 10px 16px; border-radius: 10px; font-size: 13px; z-index: 6; white-space: nowrap; }
+.ph .toast { bottom: 100px; }
+.frow { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 36px; font-size: 14px; }
+.frow > span:first-child { color: var(--d-mu); font-size: 13px; flex: none; }
+.bctl { display: flex; gap: 8px; }
+.bctl select { min-width: 0; width: 100px; }
+.dv .bctl input[type="text"] { height: 36px; width: 82px; padding: 0 8px; }
+.sheet::-webkit-scrollbar { display: none; }
+.ph .accact.two { flex-direction: row; }
+.ph .accact.two .btn { flex: 1; width: auto; }
+.nmrow { display: flex; flex-direction: column; gap: 4px; }
+.dv input[type="text"]:disabled { background: #12161D; color: #5B6573; border-color: var(--d-line); cursor: not-allowed; }
+.dv input[type="text"]:disabled::placeholder { color: #3E4652; }
+.dv input[type="text"] { height: 40px; box-sizing: border-box; background: var(--d-bg); color: var(--d-fg); border: 1px solid var(--d-line2); border-radius: 8px; padding: 0 12px; font: inherit; font-size: 14px; color-scheme: dark; }
+.dv input[type="text"]::placeholder { color: #5B6573; }
+.dv input[type="text"]:focus-visible { outline: 2px solid var(--d-green); outline-offset: -1px; border-color: var(--d-green); }
+.dv input[type="text"].bad { border-color: var(--d-red); }
+.nmrow .err { font-size: 12px; line-height: 16px; min-height: 16px; color: var(--d-red); }
+.dv input[type="text"].monoin { font-family: var(--mono); font-size: 13px; }
+/* settings */
+.setcols { display: flex; gap: 16px; align-items: flex-start; }
+.snav { width: 260px; flex: none; overflow: hidden; }
+.ph .snav { width: auto; }
+.snavb { display: flex; align-items: center; gap: 14px; width: 100%; min-height: 52px; padding: 12px 16px; background: none; border: 0; border-top: 1px solid var(--d-line); color: var(--d-fg); text-align: left; font-size: 15px; }
+.snavb:first-child { border-top: 0; }
+.snavb:hover { background: #151B22; }
+.snavb.sel, .snavb.sel:hover { background: #12201C; box-shadow: inset 3px 0 0 var(--d-green); }
+.snavb > .ms { flex: none; color: var(--d-mu); }
+.snavb.sel > .ms:first-child { color: #34D399; }
+.snavb .sn { flex: 1; min-width: 0; }
+.snavb .sn b { display: block; font-weight: 500; }
+.sdet { flex: 1; min-width: 0; max-width: 720px; display: flex; flex-direction: column; gap: 12px; }
+.sdet > * { flex: none; }
+/* session screens on phone landscape: everything a bit smaller so it fits without scrolling */
+.scomp.main { padding: 10px 20px; gap: 8px; }
+.scomp .ttl { gap: 8px; }
+.scomp .ttl b { font-size: 18px; }
+.scomp .ttl .btn { height: 34px; padding: 0 14px; font-size: 13px; }
+.scomp .sess { padding: 8px 14px; gap: 12px; }
+.scomp .sess .nm { font-size: 15px; }
+.scomp .sess .dt { font-size: 12px; }
+.scomp .sess .led { width: 10px; height: 10px; }
+.scomp .stats { gap: 8px; }
+.scomp .tile { padding: 8px 12px; }
+.scomp .tile .k { font-size: 11px; }
+.scomp .tile .v { font-size: 16px; margin-top: 0; }
+.scomp .tr { padding: 8px 12px; }
+.scomp .tr .chart { height: 84px; margin-top: 6px; }
+.scomp .tr .axis { margin-top: 4px; font-size: 10px; }
+.main.sfix { overflow: hidden; }
+.sfix .setcols { flex: 1; min-height: 0; align-items: stretch; }
+.sfix .snav { align-self: flex-start; width: 164px; }
+.sfix .sdet { overflow-y: auto; min-height: 0; scrollbar-width: none; }
+.sfix .sdet::-webkit-scrollbar { display: none; }
+.sdiv.h { border-top: 1px dashed #374151; height: 0; }
+.sdiv.v { align-self: stretch; border-left: 1px dashed #374151; width: 0; }
+.sdet.full { max-width: none; }
+.sgrid { display: grid; grid-template-columns: repeat(var(--scols, 2), 1fr); gap: 12px; }
+.stile { display: flex; align-items: center; gap: 12px; min-height: 56px; padding: 0 16px; background: var(--d-surface); border: 1px solid var(--d-line); border-radius: 12px; color: var(--d-fg); font-size: 15px; text-align: left; }
+.stile b { font-weight: 500; }
+.stile .ms { flex: none; color: var(--d-mu); }
+.stile:hover { background: #151B22; }
+.stile.sel, .stile.sel:hover { background: #12201C; border-color: var(--d-green); }
+.stile.sel .ms { color: #34D399; }
+.sc { overflow: hidden; }
+.srow { display: flex; align-items: center; gap: 16px; padding: 14px 16px; border-top: 1px solid var(--d-line); }
+.srow:first-child { border-top: 0; }
+.srow.col, .ph .srow.wrap { flex-direction: column; align-items: stretch; gap: 12px; }
+.srow .st { flex: 1; min-width: 0; }
+.srow .st b { display: block; font-size: 15px; font-weight: 400; }
+.srow .st span { display: block; font-size: 12px; line-height: 1.4; color: var(--d-mu); margin-top: 2px; }
+.srow .hd { display: flex; align-items: center; gap: 16px; }
+.srow.dis .st, .srow.dis .sw { opacity: .45; }
+.srow select { min-width: 0; width: 140px; flex: none; }
+.srow .sw { flex: none; }
+.sw:disabled { cursor: not-allowed; }
+.radlist { border: 1px solid var(--d-line2); border-radius: 10px; overflow: hidden; flex: none; }
+.radrow { display: flex; align-items: center; gap: 14px; width: 100%; padding: 10px 14px; background: none; border: 0; border-top: 1px solid var(--d-line); color: var(--d-fg); text-align: left; }
+.radrow:first-child { border-top: 0; }
+.radrow:hover { background: #151B22; }
+.radrow.on, .radrow.on:hover { background: #12201C; }
+.rad { width: 20px; height: 20px; border-radius: 50%; border: 2px solid #4B5563; flex: none; position: relative; box-sizing: border-box; }
+.rad.on { border-color: var(--d-green); }
+.rad.on::after { content: ""; position: absolute; inset: 3px; border-radius: 50%; background: var(--d-green); }
+.rt { flex: 1; min-width: 0; }
+.rt b { display: block; font-size: 15px; font-weight: 500; }
+.rt span { display: block; font-size: 12px; color: var(--d-mu); margin-top: 1px; }
+.sl { display: flex; align-items: center; gap: 12px; color: var(--d-mu); }
+.sl input[type="range"] { flex: 1; min-width: 0; accent-color: var(--d-green); }
+.spv { background: #0A0D12; border: 1px solid var(--d-line); border-radius: 8px; padding: 10px 14px; line-height: 1.45; font-size: var(--tfs, 13px); }
+.schips { display: flex; flex-wrap: wrap; gap: 8px; }
+.schips .xk { flex: none; min-width: 52px; padding: 0 12px; }
+.seg { display: flex; gap: 8px; }
+.seg .xk { flex: none; width: 76px; font-family: var(--ui); font-size: 13px; }
+.dv select:disabled { background: #12161D; color: #5B6573; border-color: var(--d-line); cursor: not-allowed; }
+.crow .cmain { flex: 1; min-width: 0; align-self: stretch; display: flex; flex-direction: column; justify-content: center; min-height: 36px; border-radius: 6px; cursor: pointer; }
+.crow .cmain:hover { background: rgba(255,255,255,.04); }
+.crow .cmain > div { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.seglbl { font-size: 13px; color: var(--muted); padding: 5px 8px 5px 10px; }
+.tab .main.tpage { padding: 0; gap: 0; overflow: hidden; }
+.thead { display: flex; align-items: center; gap: 12px; padding: 8px 16px; border-bottom: 1px solid var(--d-line); flex: none; min-height: 52px; box-sizing: border-box; }
+.thead .mono { font-size: 12px; }
+.tname { font-size: 15px; font-weight: 500; }
+.tnm { display: flex; flex-direction: column; min-width: 0; }
+.tnm .tsize { font-size: 11px; line-height: 14px; }
+.tnm .tname { line-height: 18px; }
+.tcols { flex: 1; display: flex; min-height: 0; }
+.tmain { flex: 1; min-width: 0; display: flex; flex-direction: column; position: relative; }
+.tbody { flex: 1; min-height: 0; overflow: auto; background: #0A0D12; padding: 10px 14px; font-size: var(--tfs, 13px); line-height: 1.45; scrollbar-width: none; word-break: break-all; }
+.tbody::-webkit-scrollbar { display: none; }
+.tbody[data-act] { cursor: text; }
+.tbody .r { color: #F87171; } .tbody .g { color: #34D399; } .tbody .b { color: #60A5FA; } .tbody .a { color: #F59E0B; } .tbody .mu { color: #6B7280; }
+.cur { display: inline-block; width: 8px; height: 15px; background: var(--d-green); vertical-align: text-bottom; animation: blink 1s steps(1) infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .cur { animation: none; } }
+.dv input[type="text"].cap { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; padding: 0; border: 0; }
+.lrw { display: flex; gap: 8px; white-space: pre-wrap; }
+.lrw i { font-style: normal; width: 44px; flex: none; text-align: right; color: #6B7280; }
+.tgap { display: flex; align-items: center; gap: 8px; color: #6B7280; margin: 4px 0; font-size: 12px; }
+.tgap::before, .tgap::after { content: ""; flex: 1; border-top: 1px dashed var(--d-line2); }
+.hrw { display: flex; gap: 10px; white-space: pre; }
+.hrw b { width: 1.1em; flex: none; font-weight: 400; font-size: .85em; line-height: 1.7; }
+.hrw .ac { margin-left: auto; text-align: left; }
+.lrw .tri, .tri { font-weight: 400; font-size: .85em; margin-right: .5em; }
+.hrw .ac { color: var(--d-mu); }
+.xkeys { display: flex; gap: 4px; padding: 6px 10px; background: #12171E; border-top: 1px solid var(--d-line); flex: none; overflow-x: auto; scrollbar-width: none; align-items: center; box-sizing: border-box; min-height: 49px; }
+.xkeys::-webkit-scrollbar { display: none; }
+.xk { flex: 1; min-width: 44px; height: 36px; border: 1px solid var(--d-line2); border-radius: 8px; background: #161B22; color: #C9D1D9; font-size: 12px; padding: 0; }
+.xk.on { background: #0F2E25; border-color: var(--d-green); color: #34D399; }
+.xk:disabled { opacity: .45; cursor: not-allowed; }
+.comp { padding: 6px 10px; background: #12171E; border-top: 1px solid var(--d-line); flex: none; }
+.cin { display: flex; align-items: center; gap: 8px; }
+.dv .cin input[type="text"] { flex: 1; min-width: 0; height: 36px; font-family: var(--mono); font-size: 13px; }
+.send { width: 36px; height: 36px; border-radius: 10px; border: 0; background: var(--d-green); color: #06130E; display: flex; align-items: center; justify-content: center; flex: none; }
+.robar { display: flex; align-items: center; gap: 12px; padding: 10px 14px; background: #12171E; border-top: 1px solid var(--d-line); flex: none; font-size: 13px; }
+.tdock { width: 300px; flex: none; border-left: 1px solid var(--d-line); background: #0F1419; padding: 10px; display: flex; flex-direction: column; gap: 10px; overflow: auto; scrollbar-width: none; }
+.dh { display: flex; align-items: center; justify-content: space-between; }
+.dh b { font-size: 14px; font-weight: 500; }
+.mod { background: var(--d-surface); border: 1px solid var(--d-line); border-radius: 10px; overflow: hidden; flex: none; }
+.mh { padding: 9px 12px; font-size: 11px; font-weight: 600; letter-spacing: .09em; text-transform: uppercase; color: var(--d-mu); border-bottom: 1px solid var(--d-green); }
+.mb .lnk2 { display: block; width: 100%; margin-top: 0; padding: 8px 0 2px; text-align: left; border-top: 1px solid var(--d-line); }
+.mb { padding: 10px 12px; }
+.crow { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 6px 0; border-top: 1px solid var(--d-line); font-size: 14px; }
+.crow:first-child { border-top: 0; }
+.ib { width: 36px; height: 36px; border-radius: 10px; border: 1px solid var(--d-line2); background: transparent; color: #34D399; display: flex; align-items: center; justify-content: center; padding: 0; flex: none; }
+.ib.mu { color: var(--d-mu); }
+.ib .ms { font-size: 20px; }
+.lnk2 { margin-top: 6px; background: none; border: 0; color: #34D399; font-size: 13px; padding: 4px 0; }
+.sep { width: 1px; align-self: stretch; background: var(--d-line); }
+.ph .thead { padding: 8px 12px; }
+.kbd { height: 296px; background: #161A20; padding: 10px 6px 6px; display: flex; flex-direction: column; gap: 10px; flex: none; }
+.kbd div { display: flex; justify-content: center; gap: 5px; }
+.kbd i { height: 48px; flex: 1; max-width: 36px; border-radius: 6px; background: #2A2F37; font-style: normal; display: flex; align-items: center; justify-content: center; color: #C9D1D9; font-size: 16px; }
+
+.kbd .kbtop { justify-content: flex-start; padding: 0 4px; margin-bottom: -6px; }
+.kbd .kbtop button { width: 40px; height: 24px; border: 0; background: none; color: #C9D1D9; display: flex; align-items: center; justify-content: center; padding: 0; }
+.cin .ib { flex: none; }
+.cin .rtsw { flex: none; display: flex; height: 36px; border: 1px solid var(--d-line2); border-radius: 8px; overflow: hidden; }
+.cin .rtsw button { border: 0; padding: 0 9px; background: transparent; color: #C9D1D9; font-size: 12px; }
+.cin .rtsw button.on { background: #0F2E25; color: #34D399; }
+.cin .enter { flex: none; height: 36px; padding: 0 10px; border: 1px solid var(--d-line2); border-radius: 8px; background: transparent; color: #C9D1D9; font-size: 12px; }
+.cin span.enter { height: auto; padding: 0 4px; border-color: transparent; }
+.kbd .gp { margin-top: auto; }
+.land .kbd { height: 190px; padding: 6px 6px 4px; gap: 5px; }
+.land .kbd i { height: 34px; max-width: 56px; }
+.land .kbd .kbtop { margin-bottom: -4px; }
+.land .kbd .kbtop button { height: 20px; }
+.kbd .gp b { display: block; width: 120px; height: 4px; border-radius: 2px; background: #6B7280; }
+
+.tarea { flex: 1; min-height: 0; display: flex; flex-direction: column; position: relative; }
+.pscrim { position: absolute; inset: 0; z-index: 3; }
+.cmdpop { position: absolute; z-index: 4; top: 8px; right: 8px; width: 320px; max-height: calc(100% - 16px); display: flex; flex-direction: column; background: var(--d-surface); border: 1px solid var(--d-line2); border-radius: 12px; padding: 6px 12px 10px; box-shadow: 0 10px 28px rgba(0, 0, 0, .55); }
+.ph .cmdpop { top: 8px; left: 8px; right: 8px; bottom: auto; width: auto; }
+.pph { display: flex; align-items: center; justify-content: space-between; padding: 2px 0 6px; }
+.pph b { font-size: 14px; font-weight: 500; }
+.plist { overflow: auto; scrollbar-width: none; }
+.plist::-webkit-scrollbar { display: none; }
+.cmdpop { padding: 0; }
+.pph { padding: 9px 12px; border-bottom: 1px solid var(--d-green); flex: none; }
+.pph b { font-size: 11px; font-weight: 600; letter-spacing: .09em; text-transform: uppercase; color: var(--d-mu); }
+.plist { padding: 10px 12px; }
+.plist .lnk2 { display: block; width: 100%; margin-top: 0; padding: 8px 0 2px; text-align: left; border-top: 1px solid var(--d-line); }
+.btn.on { background: #0F2E25; border-color: var(--d-green); color: #34D399; }
+.sigbar { display: flex; align-items: center; gap: 8px; padding: 5px 12px; background: #0F1419; border-bottom: 1px solid var(--d-line); flex: none; min-height: 34px; box-sizing: border-box; font-size: 11px; }
+.sg { height: 24px; padding: 0 8px; border-radius: 12px; border: 1px solid var(--d-line2); background: transparent; color: #C9D1D9; display: inline-flex; align-items: center; gap: 5px; font-family: var(--mono); font-size: 11px; }
+.sg.on { border-color: var(--d-green); color: #34D399; background: #0F2E25; }
+.sg.brk { color: var(--d-red); border-color: #7F1D1D; }
+.si { display: inline-flex; align-items: center; gap: 4px; color: var(--d-mu); }
+.sigbar .led, .sigs .led { width: 7px; height: 7px; }
+.sigbar .sep, .sigs .sep { align-self: center; height: 14px; }
+.sigs { display: flex; align-items: center; gap: 8px; margin-left: 8px; font-size: 11px; }
+.thead.cmp { min-height: 44px; padding: 4px 12px; gap: 8px; }
+.short .vpop { top: 46px; }
+
+.ph .thead { gap: 8px; }
+.vbtn { height: 36px; padding: 0 4px 0 10px; display: inline-flex; align-items: center; gap: 4px; border: 1px solid var(--d-line2); border-radius: 8px; background: #1A1D21; color: var(--d-fg); font-size: 13px; flex: none; }
+.vbtn .ms { font-size: 18px; }
+.vbtn .ms:last-child { font-size: 22px; color: var(--d-mu); }
+.ib.on { background: #0F2E25; border-color: var(--d-green); }
+.vpop { position: absolute; z-index: 4; top: 8px; right: 8px; width: 190px; background: var(--d-surface); border: 1px solid var(--d-line2); border-radius: 12px; padding: 6px; box-shadow: 0 10px 28px rgba(0, 0, 0, .55); }
+.vopt { display: flex; align-items: center; gap: 10px; width: 100%; height: 44px; padding: 0 10px; border: 0; border-radius: 8px; background: transparent; color: var(--d-fg); font-size: 14px; text-align: left; }
+.vopt span { flex: 1; }
+.vopt .ms { font-size: 20px; }
+.vopt.on { background: #12201C; color: #34D399; }
+.tab .main.tpage { position: relative; }
+.tab .vpop { top: 56px; right: 64px; }
+.tab .vpop.ro { right: 16px; }
+.fab { position: absolute; right: 12px; bottom: 12px; z-index: 2; width: 48px; height: 48px; border-radius: 50%; border: 1px solid var(--d-line2); background: #1C2128; color: #34D399; display: flex; align-items: center; justify-content: center; padding: 0; box-shadow: 0 6px 16px rgba(0, 0, 0, .5); }
+.tfull { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+.tfull .tbody { padding: 18px 20px; }
+.fab.on { background: var(--d-green); border-color: var(--d-green); color: #06130E; }
+.dv .fab { cursor: grab; touch-action: none; user-select: none; -webkit-user-select: none; }
+.dv .fab.drag { cursor: grabbing; transform: scale(1.08); box-shadow: 0 10px 22px rgba(0, 0, 0, .6); }
+.fab .ms { font-size: 24px; }
+</style>
+
+</head>
+<body>
+<div class="page">
+  <h1>Struttura di NexTerm</h1>
+  <p class="lead">Prototipo navigabile, alle misure reali di Android. Tocca le righe degli adattatori e i pulsanti, cambia voce dalla barra, e usa gli interruttori qui sotto per collegare e scollegare gli adattatori. Settings ha quattro sezioni (Terminal, Connection, App, About); sul tablet in orizzontale sono a due colonne, sul tablet in verticale una griglia 2×2 in alto con le impostazioni sotto a tutta larghezza, sul telefono in verticale un elenco che apre una pagina per sezione; sul telefono in orizzontale i pulsanti delle sezioni restano fermi e scorrono solo le impostazioni. Nella sessione attiva, su tablet e su telefono in orizzontale, Open terminal e Reset counters stanno in alto accanto a Disconnect; sul telefono in verticale sono in basso, affiancati, con Disconnect sotto a tutta larghezza. Sul telefono in orizzontale la sessione attiva (e quella terminata) è più compatta e sta in una schermata senza scroll. Per il Terminal, collegati e premi Open terminal.</p>
+  <div class="bar">
+    <div class="sim" role="group" aria-label="Simula l'hardware">
+      <span>Simula l'hardware</span>
+      <label class="chk"><input type="checkbox" id="p-ch340" checked> CH340 collegato</label>
+      <label class="chk"><input type="checkbox" id="p-ft232" checked> FT232R collegato</label>
+      <button type="button" class="link" id="reset">Ricomincia</button>
+    </div>
+    <div class="seg" role="group" aria-label="Zoom">
+      <button type="button" data-z="fit" aria-pressed="true">Adatta</button>
+      <button type="button" data-z="0.75" aria-pressed="false">75%</button>
+      <button type="button" data-z="1" aria-pressed="false">100%</button>
+    </div>
+    <span class="scale" id="scaleLabel"></span>
+  </div>
+
+  <div class="stage" id="stage">
+    <figure class="dev">
+      <div class="box" data-w="1357" data-h="824"><div class="scaled"><div class="frame tab"><div class="dv" id="dev-tab"></div></div></div></div>
+      <figcaption><b>Teclast T40 Pro</b>, <span data-orient>orizzontale</span>. 2000×1200 px a 224 ppi, cioè <span data-dims>1333×800</span> dp (densità 1,5×). <button type="button" class="rotbtn" data-rot="tab" aria-label="Ruota il tablet"><span class="ms">screen_rotation</span>Ruota</button></figcaption>
+    </figure>
+    <figure class="dev">
+      <div class="box" data-w="416" data-h="906"><div class="scaled"><div class="frame ph"><div class="dv" id="dev-ph"></div></div></div></div>
+      <figcaption><b>Xiaomi 15</b>, <span data-orient>verticale</span>. 2670×1200 px a 460 ppi, cioè <span data-dims>400×890</span> dp (densità 3×). <button type="button" class="rotbtn" data-rot="ph" aria-label="Ruota il telefono"><span class="ms">screen_rotation</span>Ruota</button></figcaption>
+    </figure>
+  </div>
+
+  <div class="notes">
+    <div><h2>Stesse voci su entrambi</h2><p>Home, Terminal, Profiles e Settings. Sul tablet sono nella barra laterale, sul telefono nella barra in basso. In Settings, App, «Button labels» toglie i nomi sotto le icone (la barra diventa più bassa).</p></div>
+    <div><h2>Connect e Set up…</h2><p>Sono pulsanti quadrati con icona, senza testo: due prese scollegate = Connect, add_link = Set up… (lo stesso nelle righe di Profiles; il nome compare come suggerimento). Connect apre subito la sessione con il profilo dell'adattatore. Set up… compare quando l'adattatore non ha un profilo e apre il modulo dei parametri, con la possibilità di salvarlo. Se un adattatore ha più profili, il selettore Profile nei dettagli sceglie quale usare.</p></div>
+    <div><h2>Reconnect</h2><p>Dopo Disconnect, o se l'adattatore viene scollegato, la Home resta sulla sessione terminata con le statistiche congelate. Reconnect riapre la stessa sessione (stesso adattatore e stesso profilo, contatori da zero), Close torna all'elenco degli adattatori. Per provare lo scollegamento usa gli interruttori in alto. Con Auto-reconnect acceso (Settings, Connection), dopo uno scollegamento la sessione resta in attesa («Waiting for the adapter…» sotto il terminale e nell'avviso in Home) e riparte da sola quando ricolleghi l'adattatore, con «Session resumed»; dopo un Disconnect manuale non riparte. Nell'app vera Android chiede di nuovo il permesso USB a ogni ricollegamento, quindi serve un tocco su OK.</p></div>
+    <div><h2>Rotazione</h2><p>Il pulsante Ruota sotto ogni dispositivo lo gira: il layout segue la larghezza della finestra, non il tipo di dispositivo. Da 600 dp in su c'è la barra laterale al posto di quella in basso (telefono in orizzontale, tablet in verticale). Sul telefono in orizzontale l'header del Terminal e la barra dei segnali diventano una sola riga e, con la tastiera aperta, restano solo terminale e tasti extra. La dock dei Commands resta una colonna solo da 1000 dp in su; sotto diventa il popup del fulmine. Sul tablet in verticale le statistiche di Home vanno su due righe da tre. La sessione, il testo scritto e le finestre aperte restano com'erano; i popup si chiudono.</p></div>
+    <div><h2>Driver</h2><p>Change driver… (nei dettagli dell'adattatore) apre la scelta: Automatic, che usa quello rilevato, oppure uno dei cinque driver. La scelta vale per tutti i profili di quel modello di adattatore. Il pulsante è disattivato durante una sessione. Nei dettagli, Control lines e Flow control elencano ciò che il driver sa fare (per un CH340: tutte le linee, None e RTS/CTS; per un FTDI anche DTR/DSR e XON/XOFF), e il modulo offre solo quei modi di controllo di flusso.</p></div>
+    <div><h2>Ancora segnaposto</h2><p>Il tema chiaro e il logging su file (in Settings).</p></div>
+    <div><h2>Terminal</h2><p>Tre viste dello stesso traffico: Console (VT100), Trace (messaggi con direzione, orari e intervalli) e Hex. In Trace e Hex la direzione è un triangolo pieno: ▲ blu per l'inviato, ▼ verde per il ricevuto; in Hex ogni riga contiene tanti byte quanti ne entrano nella larghezza. Nell'header, accanto al nome (sotto, sul telefono) c'è la dimensione del terminale, colonne×righe, che cambia con la rotazione, la tastiera e il testo. Sul tablet l'header ha il pulsante a discesa della modalità e lo stesso pulsante a fulmine del telefono: sul tablet apre la dock dei Commands a destra (che restringe il terminale), sul telefono un popup. Sul telefono l'header ha il nome del profilo e gli stessi due pulsanti: uno apre un popup per scegliere la modalità (Console, Trace, Hex), l'altro i Commands. Nell'elenco dei Commands, toccare la riga di un comando lo invia; la matita a destra apre il suo editor (nome, comando, Text o Hex, fine riga, Delete; con Hex bytes valgono le stesse regole di raw); "+ New command" apre lo stesso editor vuoto. Su entrambi, sotto l'header c'è una barra piccola con lo stato dei segnali (DTR e RTS si toccano per cambiarli, BREAK a destra); in Settings, App, «Control lines» la nasconde (e, sul telefono in orizzontale, toglie i segnali dall'header). I popup si sovrappongono al terminale senza togliergli righe, e il pulsante tondo flottante (su tablet e telefono) mette il terminale a schermo intero, senza barre né altri elementi: lo stesso pulsante ne esce. Si può trascinare dove si vuole nell'area del terminale (la posizione si ricorda per dispositivo, modalità e orientamento); un tocco semplice lo attiva. Su telefono la barra in basso sta sempre nello stesso punto: quando la tastiera si apre la copre, e riappare identica quando si chiude (tocca la console per aprirla; la freccia in alto a sinistra della tastiera la chiude). In Trace il fine riga (CR, LF, CR+LF) si cambia toccando l'etichetta accanto al campo di invio: vale solo per la sessione in corso, il profilo non cambia. In Hex il campo di invio ha l'interruttore raw | text: in raw si scrivono byte esadecimali e testo tra virgolette, per esempio 01 03 "OK" 0D, e parte esattamente com'è scritto (dentro le virgolette valgono \r \n \t \\ \" e il testo va in UTF-8); in text si scrive solo testo, con il fine riga come in Trace. Con Autoscroll spento (Settings, Terminal) Console, Trace e Hex non si muovono da sole quando arriva altro: resti dove sei finché non scorri tu. La dimensione del testo va da 7 a 24 sp, anche con il pinch. Dopo Disconnect il Terminal mostra l'ultimo testo in sola lettura, con Reconnect.</p></div>
+    <div><h2>Profiles</h2><p>Ogni profilo è una riga con le sue impostazioni, l'adattatore collegato (LED verde se è inserito) e Connect. Toccandola si apre l'accordion con i dettagli, Edit e Delete. New profile, Edit e Set up… usano lo stesso modulo.</p></div>
+  </div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+  var $ = function (q) { return document.querySelector(q); };
+  var ms = function (n, c) { return '<i class="ms' + (c ? ' ' + c : '') + '">' + n + '</i>'; };
+
+  var PARITY = { N: 'None', E: 'Even', O: 'Odd', M: 'Mark', S: 'Space' };
+  var BAUDS = [1200, 2400, 4800, 9600, 19200, 38400, 57600, 115200, 230400, 460800, 921600];
+  function cfgOf(p) { return p.baud + ' ' + p.data + p.parity + p.stop; }
+  function mkP(id, name, baud, data, parity, stop, flow, enter) {
+    var p = { id: id, name: name, baud: baud, data: data, parity: parity, stop: stop, flow: flow, enter: enter };
+    p.cfg = cfgOf(p);
+    return p;
+  }
+  function mkAdapters() {
+    return [
+      { id: 'ch340', name: 'CH340', vp: '1A86:7522', path: '/dev/bus/usb/001/002', manu: 'wch.cn', prod: 'USB Serial', serial: null,
+        driver: 'CH34x · added by NexTerm', drv: null, ports: 1, lines: 'DTR RTS CTS DSR CD RI', flow: 'None, RTS/CTS', perm: 'Granted', plugged: true,
+        profiles: [mkP('p1', 'ESP32 node', 115200, 8, 'N', '1', 'None', 'CR+LF'), mkP('p2', 'Modbus RTU', 9600, 8, 'E', '1', 'None', 'CR+LF')], profile: 'ESP32 node' },
+      { id: 'ft232', name: 'FT232R', vp: '0403:6001', path: '/dev/bus/usb/001/003', manu: 'FTDI', prod: 'FT232R USB UART', serial: 'A50285BI',
+        driver: 'FTDI', drv: null, ports: 1, lines: 'DTR RTS CTS DSR CD RI', flow: 'None, RTS/CTS, DTR/DSR, XON/XOFF', perm: 'Not requested', plugged: true,
+        profiles: [], profile: null }
+    ];
+  }
+  function blank() { var a = []; for (var i = 0; i < 60; i++) a.push(null); return a; }
+
+  var devs = [
+    { hw: 'tablet', rot: false, el: $('#dev-tab') },
+    { hw: 'phone', rot: false, el: $('#dev-ph') }
+  ];
+  var S;
+  // The window size decides the layout (rail or bottom bar), not the kind of device.
+  function frameSet(d) {
+    var tabl = d.hw === 'tablet', land = tabl !== d.rot;
+    var lng = tabl ? 1333 : 890, sht = tabl ? 800 : 400, w = land ? lng : sht, h = land ? sht : lng, pad = tabl ? 12 : 8;
+    var fr = d.el.parentElement, box = fr.parentElement.parentElement, fig = box.parentElement;
+    d.w = w; d.h = h; d.land = land; d.kind = w >= 600 ? 'tab' : 'ph';
+    fr.className = 'frame ' + d.kind + (land ? ' land' : ' port') + (d.kind === 'tab' && w < 840 ? ' med' : '') + (h < 500 ? ' short' : '');
+    fr.style.width = (w + 2 * pad) + 'px'; fr.style.height = (h + 2 * pad) + 'px'; fr.style.padding = pad + 'px'; fr.style.borderRadius = (tabl ? 28 : 46) + 'px';
+    d.el.style.width = w + 'px'; d.el.style.height = h + 'px'; d.el.style.borderRadius = (tabl ? 16 : 38) + 'px';
+    box.dataset.w = w + 2 * pad; box.dataset.h = h + 2 * pad;
+    fig.querySelector('[data-orient]').textContent = land ? 'orizzontale' : 'verticale';
+    fig.querySelector('[data-dims]').textContent = w + '×' + h;
+  }
+  function rotate(d) {
+    d.rot = !d.rot; frameSet(d);
+    d.cmds = false; d.vmenu = false;
+    render(d); layout();
+  }
+  function fresh() {
+    CMDS = defaultCmds();
+    S = { adapters: mkAdapters(), session: null, ended: null, hist: blank(), n: 0, pid: 2, log: [], boot: [], txTick: 0, lines: { dtr: true, rts: false } };
+    devs.forEach(function (d) { d.tab = 'home'; d.open = null; d.popen = null; d.sheet = null; d.confirm = null; d.csheet = null; d.cconfirm = false; d.dsheet = null; d.full = false; d.fabPos = {}; d.rot = false; frameSet(d); d.set = defSet(d.hw === 'tablet' ? 'tab' : 'ph'); d.sset = null; d.toast = ''; d.view = 'console'; d.dock = true; d.cmds = false; d.vmenu = false; d.kbd = false; d.ctrl = false; d.typed = ''; d.comp = ''; d.hexerr = false; d.follow = true; });
+    $('#p-ch340').checked = true; $('#p-ft232').checked = true;
+  }
+  var skey = function () { return S.session ? S.session.id : S.ended.id; };
+  var ad = function (id) { return S.adapters.filter(function (a) { return a.id === id; })[0]; };
+  var plugged = function () { return S.adapters.filter(function (a) { return a.plugged; }); };
+  function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;'); }
+  function pad(n) { return n < 10 ? '0' + n : '' + n; }
+  function flowTxt(f) { return f === 'None' ? 'no flow control' : f; }
+  function adChip(a) { return a.plugged ? '<span class="chip">Adapter connected</span>' : '<span class="chip no">Adapter unplugged</span>'; }
+  function clock(t) { var x = new Date(t); return pad(x.getHours()) + ':' + pad(x.getMinutes()) + ':' + pad(x.getSeconds()); }
+  function dur(t) { var s = Math.floor(t / 1000); return pad(Math.floor(s / 60)) + ':' + pad(s % 60); }
+  function fmtB(n) { return n < 1024 ? n + ' B' : (n / 1024).toFixed(1) + ' KB'; }
+
+  // ---- session ----
+  function startSession(a, p, dev) {
+    a.perm = 'Granted';
+    S.session = { id: a.id, pid: p.id || null, name: p.name, cfg: p.cfg, flow: p.flow, enter: p.enter || 'CR+LF', t0: Date.now(), rx: 0, tx: 0, err: 0 };
+    S.hist = blank(); S.ended = null; S.n = 0;
+    S.log = []; S.boot = BOOT.slice(); S.txTick = 0; S.lines = { dtr: dev ? dev.set.dtr : true, rts: dev ? dev.set.rts : false };
+    var fb = toBytes(S.boot.shift()).concat([13, 10]); pushEntry('rx', fb); S.session.rx += fb.length;
+    devs.forEach(function (d) { d.sheet = null; d.dsheet = null; d.full = false; });
+  }
+  function endSession(reason) {
+    if (!S.session) return;
+    var x = S.session;
+    S.ended = { id: x.id, pid: x.pid, name: x.name, cfg: x.cfg, flow: x.flow, enter: x.enter, log: S.log.slice(), dur: Date.now() - x.t0, rx: x.rx, tx: x.tx, err: x.err, hist: S.hist.slice(), at: Date.now(), reason: reason || '' };
+    S.session = null;
+    devs.forEach(function (d) { d.full = false; });
+  }
+  function connect(d, id) {
+    var a = ad(id);
+    if (a.profile) {
+      var p = a.profiles.filter(function (x) { return x.name === a.profile; })[0];
+      startSession(a, p, d);
+      if (d.set.openTerm) d.tab = 'terminal';
+    } else {
+      d.sheet = newForm('setup', id, null);
+    }
+  }
+  function resumeSession(dev) {
+    var e = S.ended, a = ad(e.id), pr = e.pid ? findP(e.pid) : null;
+    startSession(a, { id: e.pid, name: e.name, cfg: e.cfg, flow: e.flow, enter: pr ? pr.p.enter : e.enter }, dev);
+  }
+  function reconnect(d) {
+    var e = S.ended, a = ad(e.id);
+    if (!a.plugged) { toast(d, 'Plug in the ' + a.name + ' adapter first'); return; }
+    resumeSession(d);
+  }
+  function allProfiles() { var r = []; S.adapters.forEach(function (a) { a.profiles.forEach(function (p) { r.push({ p: p, a: a }); }); }); return r; }
+  function findP(id) { return allProfiles().filter(function (x) { return x.p.id === id; })[0]; }
+  function nameTaken(nm, exceptId) { var l = nm.toLowerCase(); return allProfiles().some(function (x) { return x.p.id !== exceptId && x.p.name.toLowerCase() === l; }); }
+  function newForm(mode, aid, p) {
+    var f = { mode: mode, aid: aid, orig: p ? p.id : null, name: p ? p.name : '', save: true, err: '', berr: false,
+      baud: '115200', custom: '', data: '8', parity: 'N', stop: '1', flow: 'None', enter: 'CR+LF' };
+    if (p) {
+      var preset = BAUDS.indexOf(p.baud) >= 0;
+      f.baud = preset ? String(p.baud) : 'custom'; f.custom = preset ? '' : String(p.baud);
+      f.data = String(p.data); f.parity = p.parity; f.stop = String(p.stop); f.flow = p.flow; f.enter = p.enter;
+    }
+    return f;
+  }
+  function fromForm(f, id, name) {
+    var baud = f.baud === 'custom' ? parseInt(f.custom, 10) : parseInt(f.baud, 10);
+    return mkP(id, name, baud, parseInt(f.data, 10), f.parity, f.stop, f.flow, f.enter);
+  }
+  function submitForm(d) {
+    var f = d.sheet, nm = f.name.trim(), a, p;
+    f.berr = false; f.err = '';
+    if (f.baud === 'custom' && !(parseInt(f.custom, 10) > 0)) { f.berr = true; return; }
+    if (f.mode !== 'setup' || f.save) {
+      if (!nm) { f.err = 'Enter a name for the profile.'; return; }
+      if (nameTaken(nm, f.orig)) { f.err = 'A profile with this name already exists.'; return; }
+    }
+    if (f.mode === 'setup') {
+      a = ad(f.aid);
+      if (f.save) { p = fromForm(f, 'p' + (++S.pid), nm); a.profiles.push(p); a.profile = p.name; }
+      else { p = fromForm(f, null, 'Quick connect'); }
+      startSession(a, p, d);
+      if (d.set.openTerm) d.tab = 'terminal';
+      return;
+    }
+    if (f.mode === 'new') {
+      a = ad(f.aid); p = fromForm(f, 'p' + (++S.pid), nm);
+      a.profiles.push(p); if (!a.profile) a.profile = p.name;
+      d.sheet = null; d.popen = p.id; toast(d, 'Profile created');
+      return;
+    }
+    var cur = findP(f.orig), old = cur.a, oldName = cur.p.name, np = fromForm(f, cur.p.id, nm), tgt = ad(f.aid), i = old.profiles.indexOf(cur.p);
+    if (tgt === old) { old.profiles[i] = np; if (old.profile === oldName) old.profile = nm; }
+    else {
+      old.profiles.splice(i, 1);
+      if (old.profile === oldName) old.profile = old.profiles.length ? old.profiles[0].name : null;
+      tgt.profiles.push(np); if (!tgt.profile) tgt.profile = nm;
+    }
+    d.sheet = null; toast(d, 'Profile saved');
+  }
+  function pconnect(d, id) {
+    var x = findP(id);
+    if (S.session) { toast(d, 'Disconnect the active session first'); return; }
+    if (!x.a.plugged) { toast(d, 'Plug in the ' + x.a.name + ' adapter first'); return; }
+    x.a.profile = x.p.name; startSession(x.a, x.p, d); d.tab = d.set.openTerm ? 'terminal' : 'home';
+  }
+  function delProfile(d) {
+    var x = findP(d.confirm);
+    if (x) {
+      x.a.profiles.splice(x.a.profiles.indexOf(x.p), 1);
+      if (x.a.profile === x.p.name) x.a.profile = x.a.profiles.length ? x.a.profiles[0].name : null;
+      devs.forEach(function (v) { if (v.popen === x.p.id) v.popen = null; });
+    }
+    d.confirm = null; toast(d, 'Profile deleted');
+  }
+  function toast(d, t) {
+    d.toast = t; clearTimeout(d.tt);
+    d.tt = setTimeout(function () { d.toast = ''; render(d); }, 2200);
+  }
+
+  // ---- shared pieces ----
+  function sb(kind) {
+    return '<div class="sb"><span>14:02</span><span class="r">' + (kind === 'ph' ? ms('signal_cellular_alt') : '') + ms('wifi') + ms('battery_full') + '</span></div>';
+  }
+  function tile(k, v, bad) { return '<div class="card tile"><div class="k">' + k + '</div><div class="v' + (bad ? ' bad' : '') + '">' + v + '</div></div>'; }
+  function chartHtml(hist) {
+    var hs = hist || S.hist, rxMax = 64, txMax = 16;
+    hs.forEach(function (h) { if (h) { rxMax = Math.max(rxMax, h[0]); txMax = Math.max(txMax, h[1]); } });
+    return hs.map(function (h) {
+      var a = h && h[0] ? Math.max(1, Math.min(100, Math.round(h[0] / rxMax * 100))) : 0, b = h && h[1] ? Math.max(1, Math.min(100, Math.round(h[1] / txMax * 100))) : 0;
+      return '<u><div><em style="height:' + a + '%"></em></div><div class="dn"><em style="height:' + b + '%"></em></div></u>';
+    }).join('');
+  }
+  function trafficCard(withLegend, hist, dim) {
+    return '<div class="card tr"><div class="row2"><b>Traffic, last 60 s</b>' +
+      (withLegend ? '<span class="legend"><span><i style="background:var(--d-green)"></i>Received</span><span><i style="background:var(--d-blue)"></i>Sent</span></span>' : '') +
+      '</div><div class="chart' + (dim ? ' dim' : '') + '">' + chartHtml(hist) + '</div>' +
+      (withLegend ? '<div class="axis"><span>-60 s</span><span>-30 s</span><span>now</span></div>' : '') + '</div>';
+  }
+  function kv(k, v, c) { return '<div class="r"><span>' + k + '</span><span' + (c ? ' class="' + c + '"' : '') + '>' + v + '</span></div>'; }
+  function kvRows(a) {
+    return kv('Manufacturer', a.manu) + kv('Product', a.prod) +
+      (a.serial ? kv('Serial number', a.serial, 'mono') : kv('Serial number', 'not provided', 'mu')) +
+      kv('VID:PID', a.vp, 'mono') + kv('Path', a.path, 'mono') + kv('Driver', drvTxt(a)) +
+      kv('Control lines', a.lines, 'mono') + kv('Flow control', a.flow) +
+      kv('USB permission', a.perm, a.perm === 'Granted' ? 'good' : 'mu');
+  }
+  function profSel(a, mode) {
+    var left = '<span>Profile</span>';
+    var sum = function (p) { return '<div class="mono mu sum">' + p.cfg + ' · ' + flowTxt(p.flow) + '</div>'; };
+    if (mode !== 'idle') { var x = S.session || S.ended; return '<div class="selrow">' + left + '<div class="selcol"><span>' + x.name + '</span>' + sum(x) + '</div></div>'; }
+    if (!a.profiles.length) return '<div class="selrow">' + left + '<div class="selcol"><span class="mu">none yet · Set up… creates one</span></div></div>';
+    var cur = a.profiles.filter(function (p) { return p.name === a.profile; })[0] || a.profiles[0];
+    return '<div class="selrow">' + left + '<div class="selcol"><select data-act="profile" data-id="' + a.id + '" aria-label="Profile">' +
+      a.profiles.map(function (p) { return '<option' + (p.name === a.profile ? ' selected' : '') + '>' + p.name + '</option>'; }).join('') + '</select>' + sum(cur) + '</div></div>';
+  }
+  function actions(a, mode) {
+    var on = mode === 'active';
+    return '<button type="button" class="btn" data-act="driver" data-id="' + a.id + '"' + (on ? ' disabled' : '') + '>Change driver…</button><span class="mu">' +
+      (on ? 'To change the driver, disconnect first.' : 'If the chip isn\'t recognized, pick the driver yourself.') + '</span>';
+  }
+  function accHtml(a, mode) {
+    return '<div class="acc">' + profSel(a, mode) + '<div class="accsep"></div><div class="kvs kv2">' + kvRows(a) + '</div><div class="accsep"></div><div class="accact">' + actions(a, mode) + '</div></div>';
+  }
+  function chip(a) { return a.profile ? '<span class="chip">Profile: ' + a.profile + '</span>' : '<span class="chip no">no profile</span>'; }
+  var PLUGS = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><g transform="rotate(-45 12 12)"><path d="M8 7.5H5.5a4.5 4.5 0 0 0 0 9H8z"/><path d="M8 10h4M8 14h4"/><path d="M16 7.5h2.5a4.5 4.5 0 0 1 0 9H16z"/><path d="M19 10.5v3"/></g></svg>';
+  /* Square icon button: two unplugged plugs = Connect, add_link = Set up… */
+  function iconBtn(connect, small, act, id) {
+    var label = connect ? 'Connect' : 'Set up…';
+    return '<button type="button" class="btn sqb' + (small ? ' s' : '') + '" data-act="' + act + '" data-id="' + id + '" aria-label="' + label + '" title="' + label + '">' + (connect ? PLUGS : ms('add_link')) + '</button>';
+  }
+  function bannerText(d, e) { return e.reason && waiting(d) ? e.reason + ' Waiting for it to come back; the session will resume on its own.' : e.reason; }
+  function banner(t) {
+    return t ? '<div class="banner"><span style="flex:1">' + t + '</span><button type="button" class="lnk" data-act="notice-x">Dismiss</button></div>' : '';
+  }
+  function emptyHtml() {
+    return '<div class="empty">' + ms('usb_off') + '<b>No adapter connected</b><p>Plug in the serial adapter with an OTG cable. Android asks for permission to use it when you tap Connect.</p>' +
+      '<button type="button" class="btn" style="margin-top:6px" data-act="refresh">Refresh list</button></div>';
+  }
+  function opt(v, label, cur) { return '<option value="' + v + '"' + (String(cur) === String(v) ? ' selected' : '') + '>' + label + '</option>'; }
+  function sel(field, opts, cur, label) {
+    return '<select data-act="fsel" data-f="' + field + '" aria-label="' + label + '">' + opts.map(function (o) { return opt(o[0], o[1], cur); }).join('') + '</select>';
+  }
+  function frow(label, ctl) { return '<div class="frow"><span>' + label + '</span>' + ctl + '</div>'; }
+  function same(list) { return list.map(function (v) { return [v, v]; }); }
+  function formHtml(d) {
+    var f = d.sheet, a = ad(f.aid), mode = f.mode, save = f.save;
+    var title = mode === 'setup' ? 'Set up connection' : mode === 'new' ? 'New profile' : 'Edit profile';
+    var head = '<div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px"><span style="font-size:18px;font-weight:500;white-space:nowrap;flex:none">' + title + '</span>' +
+      (mode === 'setup' ? '<span class="mono mu" style="font-size:12px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + a.name + ' · ' + a.vp + '</span>' : '') + '</div>';
+    var nameOn = mode !== 'setup' || save;
+    var nameRow = '<div class="nmrow"><input type="text" id="pname-' + d.hw + '" data-act="pname" placeholder="Profile name" aria-label="Profile name" value="' + esc(f.name) + '" autocomplete="off"' +
+      (nameOn ? '' : ' disabled') + (f.err ? ' class="bad" aria-invalid="true"' : '') + '><div class="err" aria-live="polite">' + (f.err || '') + '</div></div>';
+    var adapterRow = mode === 'setup' ? '' : frow('Adapter', sel('aid', S.adapters.map(function (x) { return [x.id, x.name + ' · ' + x.vp + (x.plugged ? '' : ' (not connected)')]; }), f.aid, 'Adapter'));
+    var baudCtl = '<span class="bctl">' + sel('baud', BAUDS.map(function (b) { return [b, b]; }).concat([['custom', 'Custom…']]), f.baud, 'Baud rate') +
+      '<input type="text" inputmode="numeric" data-act="fcustom" aria-label="Custom baud rate" placeholder="Baud" value="' + esc(f.custom) + '" autocomplete="off"' +
+      (f.baud === 'custom' ? '' : ' disabled') + (f.berr ? ' class="bad" aria-invalid="true"' : '') + '></span>';
+    var params = frow('Baud rate', baudCtl) + frow('Data bits', sel('data', same([5, 6, 7, 8]), f.data, 'Data bits')) +
+      frow('Parity', sel('parity', Object.keys(PARITY).map(function (k) { return [k, PARITY[k]]; }), f.parity, 'Parity')) +
+      frow('Stop bits', sel('stop', same(['1', '1.5', '2']), f.stop, 'Stop bits')) +
+      frow('Flow control', sel('flow', same(ad(f.aid).flow.split(', ')), f.flow, 'Flow control')) +
+      frow('Enter sends', sel('enter', same(['CR', 'LF', 'CR+LF']), f.enter, 'Enter sends'));
+    var sw = '<div class="swrow"><span>Save as profile</span><button type="button" class="sw' + (save ? ' on' : '') + '" data-act="savetoggle" role="switch" aria-checked="' + save + '" aria-label="Save as profile"></button></div>';
+    var body = mode === 'setup' ? params + sw + nameRow : nameRow + adapterRow + params;
+    return '<div class="scrim" data-act="scrim"><div class="sheet" role="dialog" aria-label="' + title + '">' + head + body +
+      '<div style="display:flex;gap:10px;justify-content:flex-end;margin-top:6px"><button type="button" class="btn" data-act="sheetx">Cancel</button><button type="button" class="btn p" data-act="sheetgo">' + (mode === 'setup' ? 'Connect' : 'Save') + '</button></div></div></div>';
+  }
+  function newCForm(mode, i) {
+    var c = mode === 'edit' ? CMDS[i] : null;
+    return { mode: mode, i: i, name: c ? c.n : '', cmd: c ? c.c : '', kind: c ? c.k : 'text', end: c ? c.e : 'session', nerr: '', cerr: '' };
+  }
+  function csel(field, opts, cur, label, off) {
+    return '<select data-act="csel" data-f="' + field + '" aria-label="' + label + '"' + (off ? ' disabled' : '') + '>' + opts.map(function (o) { return opt(o[0], o[1], cur); }).join('') + '</select>';
+  }
+  function cformHtml(d) {
+    var f = d.csheet, edit = f.mode === 'edit', hex = f.kind === 'hex', title = edit ? 'Edit command' : 'New command';
+    var nameRow = '<div class="nmrow"><input type="text" id="cname-' + d.hw + '" data-act="cname" placeholder="Name" aria-label="Command name" value="' + esc(f.name) + '" autocomplete="off"' +
+      (f.nerr ? ' class="bad" aria-invalid="true"' : '') + '><div class="err" aria-live="polite">' + (f.nerr || '') + '</div></div>';
+    var cmdRow = '<div class="nmrow"><input type="text" class="monoin" data-act="ccmd" placeholder="' + (hex ? 'Hex bytes, e.g. 01 03 &quot;OK&quot; 0D' : 'Command, e.g. AT+STATUS?') + '" aria-label="' + (hex ? 'Bytes to send: hex pairs and text in quotes' : 'Text to send') + '" value="' + esc(f.cmd) + '" autocomplete="off" spellcheck="false"' +
+      (f.cerr ? ' class="bad" aria-invalid="true"' : '') + '><div class="err" aria-live="polite">' + (f.cerr || '') + '</div></div>';
+    var kindRow = frow('Send as', csel('kind', [['text', 'Text'], ['hex', 'Hex bytes']], f.kind, 'Send as'));
+    var endRow = frow('Line ending', csel('end', [['session', 'Session default'], ['CR', 'CR'], ['LF', 'LF'], ['CR+LF', 'CR+LF'], ['none', 'None']], hex ? 'none' : f.end, 'Line ending', hex));
+    return '<div class="scrim" data-act="scrim"><div class="sheet" role="dialog" aria-label="' + title + '"><div style="font-size:18px;font-weight:500">' + title + '</div>' + nameRow + cmdRow + kindRow + endRow +
+      '<div style="display:flex;gap:10px;align-items:center;margin-top:6px">' + (edit ? '<button type="button" class="btn x" data-act="cdel">Delete</button>' : '') + '<span style="flex:1"></span><button type="button" class="btn" data-act="csheetx">Cancel</button><button type="button" class="btn p" data-act="csheetgo">Save</button></div></div></div>';
+  }
+  function cconfirmHtml(d) {
+    var c = CMDS[d.csheet.i];
+    return '<div class="scrim" data-act="scrim"><div class="sheet" role="alertdialog" aria-label="Delete command"><div style="font-size:18px;font-weight:500">Delete command?</div>' +
+      '<div class="mu" style="font-size:14px;line-height:1.5">“' + esc(c.n) + '” will be removed. This can\'t be undone.</div>' +
+      '<div style="display:flex;gap:10px;justify-content:flex-end;margin-top:6px"><button type="button" class="btn" data-act="ccdelx">Cancel</button><button type="button" class="btn x" data-act="ccdelok">Delete</button></div></div></div>';
+  }
+  function submitC(d) {
+    var f = d.csheet, nm = f.name.trim(), cm = f.cmd.trim(), hex = f.kind === 'hex', r = hex && cm ? parseRaw(cm) : null;
+    f.nerr = ''; f.cerr = '';
+    if (!nm) f.nerr = 'Enter a name for the command.';
+    if (!cm) f.cerr = 'Enter the command to send.';
+    else if (r && !r.b) f.cerr = r.err;
+    if (f.nerr || f.cerr) return;
+    // Plain hex is stored as 01 03 00 6B; with quoted text it stays as typed, so it remains readable.
+    var c = mkC(nm, hex && !/["']/.test(cm) ? hexTxt(r.b) : cm, f.kind, f.end);
+    if (f.mode === 'edit') CMDS[f.i] = c; else CMDS.push(c);
+    d.csheet = null; d.cconfirm = false; toast(d, f.mode === 'edit' ? 'Command saved' : 'Command created');
+  }
+  function drivers() {
+    return [['CH34x', 'CH340, CH341'], ['FTDI', 'FT232R, FT2232, FT231X'], ['CP210x', 'CP2102, CP2104'], ['PL2303', 'Prolific PL2303'], ['CDC-ACM', 'Arduino, ESP32-S2 and S3 native USB, STM32']];
+  }
+  function drvTxt(a) { return a.drv ? a.drv + ' · chosen by you' : a.driver; }
+  function dformHtml(d) {
+    var f = d.dsheet, a = ad(f.aid), dirty = f.pick !== (a.drv || 'auto');
+    var rows = [['auto', 'Automatic', 'Detected: ' + a.driver]].concat(drivers().map(function (x) { return [x[0], x[0], x[1]]; }));
+    var list = '<div class="radlist" role="radiogroup" aria-label="Driver">' + rows.map(function (r) {
+      var on = f.pick === r[0];
+      return '<button type="button" class="radrow' + (on ? ' on' : '') + '" role="radio" aria-checked="' + on + '" data-act="dpick" data-v="' + r[0] + '"><span class="rad' + (on ? ' on' : '') + '"></span><span class="rt"><b>' + r[1] + '</b><span>' + r[2] + '</span></span></button>';
+    }).join('') + '</div>';
+    return '<div class="scrim" data-act="scrim"><div class="sheet" role="dialog" aria-label="Driver">' +
+      '<div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px"><span style="font-size:18px;font-weight:500">Driver</span><span class="mono mu" style="font-size:12px">' + a.name + ' · ' + a.vp + '</span></div>' +
+      '<div class="mu" style="font-size:13px;line-height:1.4">Used whenever this adapter model is connected, in every profile.</div>' + list +
+      '<div class="mu" style="font-size:12px;line-height:1.4">If the driver doesn\'t match the chip, the port may fail to open.</div>' +
+      '<div style="display:flex;gap:10px;justify-content:flex-end;margin-top:6px"><button type="button" class="btn" data-act="dsheetx">Cancel</button><button type="button" class="btn p" data-act="dsheetgo"' + (dirty ? '' : ' disabled') + '>Save</button></div></div></div>';
+  }
+  function confirmHtml(d) {
+    var x = findP(d.confirm);
+    return '<div class="scrim" data-act="scrim"><div class="sheet" role="alertdialog" aria-label="Delete profile"><div style="font-size:18px;font-weight:500">Delete profile?</div>' +
+      '<div class="mu" style="font-size:14px;line-height:1.5">“' + esc(x.p.name) + '” will be removed. This can\'t be undone.</div>' +
+      '<div style="display:flex;gap:10px;justify-content:flex-end;margin-top:6px"><button type="button" class="btn" data-act="cdelx">Cancel</button><button type="button" class="btn x" data-act="cdelok">Delete</button></div></div></div>';
+  }
+  function holdHtml(d, key) {
+    var m = { terminal: ['terminal', 'Terminal'], profiles: ['bookmarks', 'Profiles'], settings: ['settings', 'Settings'] }[key];
+    var body;
+    if (key === 'terminal' && !S.session) {
+      // Same dashed box as the other empty screens, at the same height (an invisible label stands in for the "Connected adapters" line).
+      return '<div class="lbl ghost" aria-hidden="true">&nbsp;</div><div class="empty">' + ms('terminal') + '<b>No active session</b><p>Connect an adapter from Home to open the terminal.</p><button type="button" class="btn" data-act="tab" data-v="home" style="margin-top:6px">Go to Home</button></div>';
+    } else if (key === 'terminal') {
+      body = '<b>Terminal</b><p>' + S.session.name + ' · ' + S.session.cfg + ' · ' + dur(Date.now() - S.session.t0) + '</p><p>This is the next screen to design.</p>';
+    } else {
+      body = '<b>' + m[1] + '</b><p>Not designed yet.</p>';
+    }
+    return '<div class="hold">' + ms(m[0]) + body + '</div>';
+  }
+
+  // ---- terminal ----
+  function mkC(n, c, k, e) { return { n: n, c: c, k: k || 'text', e: e || 'session' }; }
+  function defaultCmds() { return [mkC('Status', 'AT+STATUS?'), mkC('Sensors on', 'AT+SENSORS=1'), mkC('Version', 'AT+GMR'), mkC('Reset', 'AT+RST')]; }
+  var CMDS = defaultCmds();
+  /* "Raw" input: hex pairs mixed with text in quotes, like 01 03 "OK" 0D 0A. Both " and ' quote; inside, \r \n \t \\ \" \' are escapes
+     and the text goes out as UTF-8. Returns { b: bytes or null, err: short message }. Same rules as the app (RawBytes.kt). */
+  function utf8(str) { var u = unescape(encodeURIComponent(str)), b = []; for (var k = 0; k < u.length; k++) b.push(u.charCodeAt(k)); return b; }
+  function parseRaw(str) {
+    var ERR_P = 'Use hex pairs like 01 03, or "text" in quotes.', ERR_E = 'Unknown escape. Use \\r \\n \\t \\\\ or \\".';
+    var out = [], dg = '', i = 0, esc1 = { r: '\r', n: '\n', t: '\t', '\\': '\\', '"': '"', "'": "'" };
+    function flush() {
+      if (dg.length % 2) return false;
+      for (var k = 0; k < dg.length; k += 2) out.push(parseInt(dg.substr(k, 2), 16));
+      dg = ''; return true;
+    }
+    while (i < str.length) {
+      var c = str.charAt(i);
+      if (/\s/.test(c)) { i++; continue; }
+      if (c === '"' || c === "'") {
+        if (!flush()) return { b: null, err: ERR_P };
+        i++;
+        var q = '', closed = false;
+        while (i < str.length) {
+          var ch = str.charAt(i);
+          if (ch === c) { closed = true; i++; break; }
+          if (ch === '\\') {
+            var e = str.charAt(i + 1);
+            if (!esc1.hasOwnProperty(e)) return { b: null, err: ERR_E };
+            q += esc1[e]; i += 2;
+          } else { q += ch; i++; }
+        }
+        if (!closed) return { b: null, err: 'A quote is not closed.' };
+        out = out.concat(utf8(q));
+      } else if (/[0-9a-fA-F]/.test(c)) { dg += c; i++; }
+      else return { b: null, err: ERR_P };
+    }
+    if (!flush()) return { b: null, err: ERR_P };
+    return out.length ? { b: out, err: '' } : { b: null, err: 'Enter bytes, or "text" in quotes.' };
+  }
+  function hexTxt(b) { return b.map(function (x) { return (x < 16 ? '0' : '') + x.toString(16).toUpperCase(); }).join(' '); }
+  var BOOT = ['rst:0x1 (POWERON_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)', 'I (312) cpu_start: Pro cpu up.', 'I (329) cpu_start: App version: 2.4.1', 'I (336) wifi:mode : sta (a0:76:4e:1b:22:c8)', 'Link ready'];
+  function toBytes(str) { var b = []; for (var i = 0; i < str.length; i++) b.push(str.charCodeAt(i) & 255); return b; }
+  function enterBytes(e) { return e === 'CR' ? [13] : e === 'LF' ? [10] : [13, 10]; }
+  function printable(x) { return x >= 32 && x < 127; }
+  function ascii(bytes) { return bytes.filter(function (x) { return x !== 13 && x !== 10; }).map(function (x) { return printable(x) ? String.fromCharCode(x) : '·'; }).join(''); }
+  function dots(bytes) { return bytes.map(function (x) { return printable(x) ? String.fromCharCode(x) : '.'; }).join(''); }
+  function pushEntry(dir, bytes, text) { S.log.push({ t: Date.now() - S.session.t0, dir: dir, b: bytes, text: text || '' }); if (S.log.length > 300) S.log.shift(); }
+  function replyFor(cmd) {
+    if (cmd === null) return [[1, 3, 6, 0, 23, 0, 2, 0, 17, 92, 178]];
+    if (!cmd) return [];
+    var m = { 'AT+STATUS?': ['+STATUS: OK up=252 heap=214880'], 'AT+SENSORS=1': ['OK'], 'AT+GMR': ['AT version:2.4.1'], 'AT+RST': ['OK'] };
+    return m[cmd.toUpperCase()] || ['ERR unknown command'];
+  }
+  function sendBytes(bytes, isText, text, end) {
+    if (!S.session) return;
+    var sess = S.session, cmd = isText ? text.trim() : null;
+    var tail = !isText || end === 'none' ? [] : enterBytes(!end || end === 'session' ? sess.enter : end);
+    var full = bytes.concat(tail);
+    pushEntry('tx', full); sess.tx += full.length; S.txTick += full.length;
+    setTimeout(function () {
+      if (S.session !== sess) return;
+      replyFor(cmd).forEach(function (x) {
+        var b = typeof x === 'string' ? toBytes(x).concat([13, 10]) : x;
+        pushEntry('rx', b); sess.rx += b.length;
+      });
+      if (cmd && cmd.toUpperCase() === 'AT+RST') S.boot = BOOT.slice();
+      refreshTerms();
+    }, 320);
+    refreshTerms();
+  }
+  function sendCmd(c) {
+    if (c.k === 'hex') sendBytes(parseRaw(c.c).b || [], false);
+    else sendBytes(toBytes(c.c), true, c.c, c.e);
+  }
+  function refreshTerms() { devs.forEach(function (d) { if (d.tab === 'terminal') updateTerm(d); }); }
+  function curLog() { return S.session ? S.log : S.ended.log; }
+  function tmeta() { return S.session || S.ended; }
+  function bodyHtml(d) {
+    var L = curLog(), v = d.view || 'console', h = '', prev = null;
+    if (v === 'console') {
+      L.forEach(function (e) {
+        if (e.dir === 'sys') return;
+        var t = esc(ascii(e.b));
+        h += e.dir === 'tx' ? '<div><span class="g">esp32:~# </span>' + t + '</div>' : '<div class="' + (/^ERR/.test(t) ? 'r' : /^OK/.test(t) ? 'g' : /^I \(/.test(t) ? 'mu' : '') + '">' + t + '</div>';
+      });
+      if (S.session) h += '<div><span class="g">esp32:~# </span><span class="typed">' + esc(d.typed || '') + '</span><i class="cur"></i></div>';
+    } else if (v === 'lines') {
+      L.forEach(function (e) {
+        if (e.dir === 'sys') { h += '<div class="lrw"><i></i><span class="a">' + esc(e.text) + '</span></div>'; return; }
+        var dt = prev === null ? 0 : e.t - prev, t = esc(ascii(e.b));
+        prev = e.t;
+        if (dt > 3000) h += '<div class="tgap">' + (dt / 1000).toFixed(1) + ' s</div>';
+        h += '<div class="lrw"><i>+' + (dt < 10000 ? (dt / 1000).toFixed(2) : (dt / 1000).toFixed(1)) + '</i><span class="' + (e.dir === 'tx' ? 'b' : /^ERR/.test(t) ? 'r' : '') + '"><b class="tri ' + (e.dir === 'tx' ? 'b' : 'g') + '">' + (e.dir === 'tx' ? '▲' : '▼') + '</b>' + t + '</span></div>';
+      });
+    } else {
+      var per = d.hexPer || (d.kind === 'tab' ? 16 : 8);  // fitTerm measures how many bytes fit the width
+      L.forEach(function (e) {
+        if (e.dir === 'sys' || !e.b.length) return;
+        for (var i = 0; i < e.b.length; i += per) {
+          var ch = e.b.slice(i, i + per);
+          var hx = ch.map(function (x) { return (x < 16 ? '0' : '') + x.toString(16).toUpperCase(); }).join(' ');
+          h += '<div class="hrw"><b class="' + (e.dir === 'tx' ? 'b' : 'g') + '">' + (i === 0 ? (e.dir === 'tx' ? '▲' : '▼') : '') + '</b><span class="hx" style="min-width:' + (per * 3 - 1) + 'ch">' + hx + '</span><span class="ac" style="min-width:' + per + 'ch">' + esc(dots(ch)) + '</span></div>';
+        }
+      });
+    }
+    return h;
+  }
+  function updateTerm(d) {
+    var tb = d.el.querySelector('.tbody');
+    if (!tb) { render(d); return; }
+    tb.innerHTML = bodyHtml(d);
+    var du = d.el.querySelector('.tdur');
+    if (du && S.session) du.textContent = dur(Date.now() - S.session.t0);
+    // With Autoscroll off the view stays where it is while new rows arrive.
+    if (d.follow !== false && d.set.auto !== false) tb.scrollTop = tb.scrollHeight;
+  }
+  function xkeysHtml(d) {
+    var keys = allKeys().filter(function (k) { return d.set.keys.indexOf(k) >= 0; });
+    if (!keys.length) return '<div class="xkeys mono"><span class="mu" style="font-size:12px;padding:0 4px;font-family:var(--ui)">No extra keys. Choose them in Settings, Terminal.</span></div>';
+    return '<div class="xkeys mono">' + keys.map(function (k) { return '<button type="button" class="xk' + (k === 'CTRL' && d.ctrl ? ' on' : '') + '" data-act="xkey" data-v="' + k + '">' + k + '</button>'; }).join('') + '</div>';
+  }
+  function compHtml(d) {
+    var hex = d.view === 'hex', err = d.hexerr, raw = hex && d.raw !== false;
+    // Under Hex: "raw" takes hex pairs and "quoted text" and sends exactly those bytes; "text" sends plain text with the line ending, like Trace.
+    var seg = hex ? '<span class="rtsw mono" role="radiogroup" aria-label="Send mode">' +
+      '<button type="button" role="radio" aria-checked="' + raw + '" class="' + (raw ? 'on' : '') + '" data-act="rawmode" data-v="raw">raw</button>' +
+      '<button type="button" role="radio" aria-checked="' + !raw + '" class="' + (raw ? '' : 'on') + '" data-act="rawmode" data-v="text">text</button></span>' : '';
+    var ent = raw ? '' :
+      '<button type="button" class="enter mono" data-act="enter" title="Line ending, for this session only" aria-label="Line ending ' + S.session.enter + '. Tap to change. Applies to this session only.">' + S.session.enter + '</button>';
+    return '<div class="comp"><div class="cin"><input type="text" id="comp-' + d.hw + '" data-act="comp" placeholder="' + (raw ? '01 03 &quot;OK&quot; 0D' : 'Send text') + '" aria-label="' + (raw ? 'Bytes to send: hex pairs and text in quotes' : 'Text to send') + '" value="' + esc(d.comp || '') + '" autocomplete="off" spellcheck="false"' + (err ? ' class="bad" aria-invalid="true"' : '') + '>' +
+      seg + ent + '<button type="button" class="send" data-act="send" aria-label="Send">' + ms('arrow_upward') + '</button></div></div>';
+  }
+  // Auto-reconnect on and the adapter unplugged: the session is waiting for it to come back.
+  function waiting(d) { return !!(S.ended && !S.session && S.ended.reason && d.set.reconnect && !ad(S.ended.id).plugged); }
+  function roBar(d) {
+    return '<div class="robar"><span class="mu" style="flex:1">' + (waiting(d) ? 'Waiting for the adapter. The session resumes when it is plugged back in.' : 'Session ended. This is the last transcript.') + '</span><button type="button" class="btn p s" data-act="reconnect">Reconnect</button></div>';
+  }
+  function modBox(t, h) { return '<div class="mod"><div class="mh">' + t + '</div><div class="mb">' + h + '</div></div>'; }
+  function sigItems(inline) {
+    var L = S.lines;
+    var out = function (k, label) {
+      var on = L[k];
+      return '<button type="button" class="sg' + (on ? ' on' : '') + '" data-act="line" data-v="' + k + '" aria-pressed="' + on + '"><b class="led' + (on ? '' : ' hollow') + '"></b>' + label + '</button>';
+    };
+    var inp = function (label, on) { return '<span class="si"><b class="led' + (on ? '' : ' hollow') + '"></b>' + label + '</span>'; };
+    return out('dtr', 'DTR') + out('rts', 'RTS') + '<span class="sep"></span>' + inp('CTS', 1) + inp('DSR', 0) + inp('CD', 0) + inp('RI', 0) +
+      (inline ? '<span class="sep"></span>' : '<span style="flex:1"></span>') + '<button type="button" class="sg brk" data-act="brk">BREAK</button>';
+  }
+  function sigBar() {
+    return '<div class="sigbar mono" role="group" aria-label="Signals">' + sigItems(false) + '</div>';
+  }
+  function cmdsMod() {
+    return (CMDS.length ? CMDS.map(function (c, i) {
+      return '<div class="crow"><div class="cmain" role="button" tabindex="0" data-act="cmd" data-v="' + i + '" aria-label="Send ' + esc(c.n) + '"><div>' + esc(c.n) + '</div><div class="mono mu" style="font-size:12px">' + esc(c.c) + '</div></div><button type="button" class="ib" data-act="cedit" data-v="' + i + '" aria-label="Edit ' + esc(c.n) + '">' + ms('edit') + '</button></div>';
+    }).join('') : '<div class="mu" style="font-size:13px;padding:6px 0 10px">No saved commands yet.</div>') + '<button type="button" class="lnk2" data-act="cmdnew">+ New command</button>';
+  }
+  function viewBtn(d, view) {
+    var vi = { console: 'terminal', lines: 'format_list_bulleted', hex: 'tag' }[view], vl = { console: 'Console', lines: 'Trace', hex: 'Hex' }[view];
+    return '<button type="button" class="vbtn" data-act="vmenu" aria-haspopup="menu" aria-expanded="' + !!d.vmenu + '" aria-label="View: ' + vl + '">' + ms(vi) + '<span>' + vl + '</span>' + ms('arrow_drop_down') + '</button>';
+  }
+  function viewPop(d, ro) {
+    var v = d.view || 'console';
+    return '<div class="pscrim" data-act="vmx"></div><div class="vpop' + (ro ? ' ro' : '') + '" role="menu" aria-label="View">' + [['console', 'Console', 'terminal'], ['lines', 'Trace', 'format_list_bulleted'], ['hex', 'Hex', 'tag']].map(function (x) {
+      return '<button type="button" class="vopt' + (v === x[0] ? ' on' : '') + '" role="menuitemradio" aria-checked="' + (v === x[0]) + '" data-act="view" data-v="' + x[0] + '">' + ms(x[2]) + '<span>' + x[1] + '</span>' + (v === x[0] ? ms('check') : '') + '</button>';
+    }).join('') + '</div>';
+  }
+  function fabKey(d) { return (d.full ? 'f' : 'n') + (d.land ? 'L' : 'P'); }
+  function fabStyle(x, y) { return 'right:auto;bottom:auto;left:calc(12px + (100% - 72px) * ' + x + ');top:calc(12px + (100% - 72px) * ' + y + ')'; }
+  function fabHtml(d) {
+    var q = d.fabPos[fabKey(d)] || { x: 1, y: 1 };
+    return '<button type="button" class="fab' + (d.full ? ' on' : '') + '" style="' + fabStyle(q.x, q.y) + '" data-act="full" aria-label="' + (d.full ? 'Exit full screen' : 'Full screen') + '" aria-pressed="' + !!d.full + '">' + ms(d.full ? 'fullscreen_exit' : 'fullscreen') + '</button>';
+  }
+  function fullHtml(d) {
+    return '<div class="tfull">' + tbodyHtml(d, false) + capHtml(d, false) + '</div>' + (d.kbd && d.hw === 'phone' ? kbdHtml() : '');
+  }
+  function cmdPop() {
+    return '<div class="pscrim" data-act="cmdx"></div><div class="cmdpop" role="dialog" aria-label="Commands"><div class="pph"><b>Commands</b></div><div class="plist">' + cmdsMod() + '</div></div>';
+  }
+  function tbodyHtml(d, ro) {
+    var v = d.view || 'console';
+    return '<div class="tarea"><div class="tbody m"' + (v === 'console' && !ro ? ' data-act="focuscap"' : '') + '>' + bodyHtml(d) + '</div>' + (d.cmds && !ro ? cmdPop() : '') + (d.vmenu && d.kind === 'ph' ? viewPop(d, ro) : '') + (!ro ? fabHtml(d) : '') + '</div>';
+  }
+  function capHtml(d, ro) {
+    return (d.view || 'console') === 'console' && !ro ? '<input type="text" class="cap" data-act="cap" aria-label="Terminal input" autocomplete="off" autocapitalize="off" spellcheck="false" value="' + esc(d.typed || '') + '">' : '';
+  }
+  function termTab(d) {
+    var ro = !S.session, x = tmeta(), view = d.view || 'console';
+    var wide = d.w >= 1000, compact = d.h < 500, kbdOn = !!d.kbd && d.hw === 'phone' && !ro;
+    var showSide = !ro && wide && !!d.dock;
+    var tool = ro ? '' : wide
+      ? '<button type="button" class="ib' + (showSide ? ' on' : '') + '" data-act="tdock" aria-expanded="' + showSide + '" aria-label="Commands">' + ms('bolt') + '</button>'
+      : '<button type="button" class="ib' + (d.cmds ? ' on' : '') + '" data-act="cmds" aria-haspopup="dialog" aria-expanded="' + !!d.cmds + '" aria-label="Commands">' + ms('bolt') + '</button>';
+    var head, sig = '';
+    if (compact) {
+      head = '<div class="thead cmp"><b class="led' + (ro ? ' hollow' : '') + '"></b><span class="tnm"><span class="tname">' + esc(x.name) + '</span><span class="mono mu tsize"></span></span>' +
+        (ro ? '<span class="mono mu">· ended</span>' : d.set.signals === false ? '' : '<span class="sigs mono" role="group" aria-label="Signals">' + sigItems(true) + '</span>') + '<span style="flex:1"></span>' + viewBtn(d, view) + tool + '</div>';
+    } else {
+      head = '<div class="thead"><b class="led' + (ro ? ' hollow' : '') + '"></b><span class="tname">' + esc(x.name) + '</span><span class="mono mu">' + x.cfg + ' · ' + flowTxt(x.flow) + '</span><span class="mono mu tsize"></span>' +
+        (ro ? '<span class="mono mu">· ended</span>' : '<span class="mono mu tdur">' + dur(Date.now() - S.session.t0) + '</span>') + '<span style="flex:1"></span>' + viewBtn(d, view) + tool + '</div>';
+      sig = ro || d.set.signals === false ? '' : sigBar();
+    }
+    if (kbdOn) { head = ''; sig = ''; }
+    var side = showSide ? '<aside class="tdock">' + modBox('Commands', cmdsMod()) + '</aside>' : '';
+    var foot = ro ? roBar(d) : view === 'console' ? xkeysHtml(d) : compHtml(d);
+    return '<section class="main tpage">' + head + sig + '<div class="tcols"><div class="tmain">' + tbodyHtml(d, ro) + foot + capHtml(d, ro) + '</div>' + side + '</div>' + (d.vmenu && !kbdOn ? viewPop(d, ro) : '') + '</section>';
+  }
+  function termPh(d) {
+    var ro = !S.session, x = tmeta(), view = d.view || 'console';
+    var head = '<div class="thead"><b class="led' + (ro ? ' hollow' : '') + '"></b><span class="tnm"><span class="tname">' + esc(x.name) + '</span><span class="mono mu tsize"></span></span><span style="flex:1"></span>' + viewBtn(d, view) +
+      (ro ? '' : '<button type="button" class="ib' + (d.cmds ? ' on' : '') + '" data-act="cmds" aria-haspopup="dialog" aria-expanded="' + !!d.cmds + '" aria-label="Commands">' + ms('bolt') + '</button>') + '</div>';
+    var foot = ro ? roBar(d) : view === 'console' ? xkeysHtml(d) : compHtml(d);
+    return head + (ro || d.set.signals === false ? '' : sigBar()) + tbodyHtml(d, ro) + foot + capHtml(d, ro);
+  }
+  function kbdHtml() {
+    var rows = [['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'], ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l'], ['⇧', 'z', 'x', 'c', 'v', 'b', 'n', 'm', '⌫'], ['?123', ',', '', '.', '⏎']];
+    return '<div class="kbd"><div class="kbtop"><button type="button" data-act="kbd" aria-label="Hide keyboard">' + ms('keyboard_arrow_down') + '</button></div>' + rows.map(function (r) { return '<div>' + r.map(function (k) { return '<i' + (k === '' ? ' style="flex:4;max-width:none"' : '') + '>' + k + '</i>'; }).join('') + '</div>'; }).join('') + '<div class="gp"><b></b></div></div>';
+  }
+  function submitComp(d) {
+    if (!S.session) return;
+    var v = (d.comp || '').trim();
+    if (d.view === 'hex' && d.raw !== false) {
+      var r = parseRaw(v);
+      if (!r.b) { d.hexerr = true; toast(d, r.err); return; }
+      sendBytes(r.b, false);
+    } else {
+      if (!v) return;
+      sendBytes(toBytes(v), true, v);
+    }
+    d.comp = ''; d.hexerr = false;
+  }
+  function focusCap(d) { var i = d.el.querySelector('input[data-act="cap"]'); if (i) i.focus(); }
+  function focusComp(d) { var i = d.el.querySelector('input[data-act="comp"]'); if (i) { i.focus(); i.setSelectionRange(i.value.length, i.value.length); } }
+
+  // ---- profiles ----
+  function adLine(a) {
+    return '<div class="mono mu" style="font-size:12px;display:flex;align-items:center;gap:8px;white-space:nowrap"><b class="led' + (a.plugged ? '' : ' hollow') + '"></b>' + a.name + ' · ' + a.vp + (a.plugged ? '' : ' · not connected') + '</div>';
+  }
+  function pRight(p, small) {
+    if (S.session && S.session.pid === p.id) return '<span class="chip">Connected</span>';
+    return iconBtn(true, small, 'pconnect', p.id);
+  }
+  function profAcc(p, a, two) {
+    return '<div class="acc"><div class="kvs kv2">' + kv('Adapter', a.name + ' · ' + a.vp, 'mono') + kv('Baud rate', p.baud, 'mono') + kv('Data bits', p.data) + kv('Parity', PARITY[p.parity]) +
+      kv('Stop bits', p.stop) + kv('Flow control', p.flow) + kv('Enter sends', p.enter) + '</div><div class="accsep"></div><div class="accact two">' +
+      '<button type="button" class="btn" data-act="pedit" data-id="' + p.id + '">Edit</button><button type="button" class="btn x" data-act="pdelete" data-id="' + p.id + '">Delete</button></div></div>';
+  }
+  function emptyProfiles() {
+    return '<div class="lbl ghost" aria-hidden="true">&nbsp;</div><div class="empty">' + ms('bookmarks') + '<b>No profiles yet</b><p>A profile saves the serial settings for an adapter, so you can connect with one tap.</p>' +
+      '<button type="button" class="btn p" style="margin-top:6px" data-act="pnew">New profile</button></div>';
+  }
+  function rowProfTab(x, d) {
+    var p = x.p, a = x.a, open = d.popen === p.id;
+    return '<div class="rw' + (open ? ' sel open' : '') + '" data-act="ptoggle" data-id="' + p.id + '" role="button" tabindex="0" aria-expanded="' + open + '">' + ms('bookmark', 'mu') +
+      '<div style="flex:1;min-width:0"><div style="font-size:15px;font-weight:500">' + esc(p.name) + '</div><div class="mono mu" style="font-size:12px">' + p.cfg + ' · ' + flowTxt(p.flow) + '</div></div>' +
+      adLine(a) + pRight(p, false) + '</div>' + (open ? profAcc(p, a) : '');
+  }
+  function profilesTab(d) {
+    var list = allProfiles();
+    return '<section class="main"><div class="ttl"><b>Profiles</b><span style="flex:1"></span>' + (list.length ? '<button type="button" class="btn p" data-act="pnew">New profile</button>' : '') + '</div>' +
+      (list.length ? '<div class="card lst">' + list.map(function (x) { return rowProfTab(x, d); }).join('') + '</div>' : emptyProfiles()) + '</section>';
+  }
+  function rowProfPh(x, d) {
+    var p = x.p, a = x.a, open = d.popen === p.id;
+    return '<div class="rw' + (open ? ' sel open' : '') + '" data-act="ptoggle" data-id="' + p.id + '" role="button" tabindex="0" aria-expanded="' + open + '">' + ms('bookmark', 'mu') +
+      '<div style="flex:1;min-width:0"><div style="font-size:15px;font-weight:500">' + esc(p.name) + '</div><div class="mono mu" style="font-size:12px">' + p.cfg + '</div><div class="mono mu" style="font-size:12px">' + flowTxt(p.flow) + '</div>' +
+      '<div style="margin-top:4px">' + adLine(a) + '</div></div>' + pRight(p, true) + '</div>' + (open ? profAcc(p, a) : '');
+  }
+  function profilesPh(d) {
+    var list = allProfiles();
+    return '<div class="hdr"><b>Profiles</b></div><div class="content">' +
+      (list.length ? '<div class="row2"><span class="lbl">Saved profiles</span><button type="button" class="btn s p" data-act="pnew">New profile</button></div><div class="card lst">' + list.map(function (x) { return rowProfPh(x, d); }).join('') + '</div>' : emptyProfiles()) + '</div>';
+  }
+
+  // ---- settings ----
+  function allKeys() { return ['ESC', 'TAB', 'CTRL', 'ALT', '↑', '↓', '←', '→', '|', '~', '/', '-', 'HOME', 'END', 'PGUP', 'PGDN']; }
+  function scats() { return [['terminal', 'terminal', 'Terminal'], ['connection', 'usb', 'Connection'], ['app', 'tune', 'App'], ['about', 'info', 'About']]; }
+  function defSet(kind) {
+    return { size: 13, echo: false, auto: true, signals: true, labels: true, scroll: 10000, awake: true, reconnect: false, openTerm: false, dtr: true, rts: false, theme: 'dark',
+      keys: kind === 'tab' ? allKeys().slice(0, 12) : ['ESC', 'TAB', 'CTRL', '↑', '↓', '←', '→'] };
+  }
+  function num(n) { return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ','); }
+  function sSwitch(v, on, label) { return '<button type="button" class="sw' + (on ? ' on' : '') + '" data-act="sset" data-v="' + v + '" role="switch" aria-checked="' + on + '" aria-label="' + label + '"></button>'; }
+  function sRow(title, help, ctl, cls) { return '<div class="srow' + (cls ? ' ' + cls : '') + '"><div class="st"><b>' + title + '</b>' + (help ? '<span>' + help + '</span>' : '') + '</div>' + ctl + '</div>'; }
+  function sCard(rows) { return '<div class="card sc">' + rows.join('') + '</div>'; }
+  function chipBtn(act, v, label, on, cls) {
+    return '<button type="button" class="xk' + (cls ? ' ' + cls : '') + (on ? ' on' : '') + '" data-act="' + act + '" data-v="' + v + '" aria-pressed="' + on + '">' + label + '</button>';
+  }
+  function catBody(d, k) {
+    var st = d.set;
+    if (k === 'terminal') {
+      var size = '<div class="srow col"><div class="hd"><div class="st"><b>Text size</b><span>You can also pinch the terminal to zoom.</span></div><span class="mono sval">' + st.size + ' sp</span></div>' +
+        '<div class="sl"><span style="font-size:12px">A</span><input type="range" min="7" max="24" step="1" value="' + st.size + '" data-act="ssize" aria-label="Text size"><span style="font-size:20px">A</span></div>' +
+        '<div class="spv mono">esp32:~# AT+STATUS?<br>+STATUS: OK up=252 heap=214880</div></div>';
+      var scroll = '<select data-act="sselect" data-f="scroll" aria-label="Scrollback">' + [1000, 5000, 10000, 50000].map(function (n) { return opt(n, num(n) + ' lines', st.scroll); }).join('') + '</select>';
+      var keys = '<div class="srow col"><div class="st"><b>Extra keys</b><span>Tap a key to show or hide it in the keys bar.</span></div><div class="schips mono">' +
+        allKeys().map(function (k2) { return chipBtn('skey', k2, k2, st.keys.indexOf(k2) >= 0); }).join('') + '</div></div>';
+      return sCard([size, sRow('Local echo', 'Show what you type even if the device does not send it back.', sSwitch('echo', st.echo, 'Local echo')),
+        sRow('Autoscroll', 'Follow new output at the bottom. Turn off to stay where you scrolled.', sSwitch('auto', st.auto, 'Autoscroll')),
+        sRow('Scrollback', 'Lines kept in memory for Console and Trace.', scroll), sRow('Keep screen on', 'Stop the screen from turning off during a session.', sSwitch('awake', st.awake, 'Keep screen on'))]) + sCard([keys]);
+    }
+    if (k === 'connection') {
+      var lines = '<div class="schips mono" role="group" aria-label="Initial control lines">' + chipBtn('sset', 'dtr', 'DTR', st.dtr) + chipBtn('sset', 'rts', 'RTS', st.rts) + '</div>';
+      return sCard([sRow('Auto-reconnect', 'Resume the session if the adapter is unplugged and plugged back in.', sSwitch('reconnect', st.reconnect, 'Auto-reconnect')),
+        sRow('Open terminal after Connect', 'Go straight to Terminal when a session starts.', sSwitch('openTerm', st.openTerm, 'Open terminal after Connect')),
+        sRow('Initial DTR and RTS', 'Lines set when the port opens. Some boards, like ESP32 and Arduino, reset when these change.', lines, 'wrap')]);
+    }
+    if (k === 'app') {
+      var theme = '<div class="seg" role="radiogroup" aria-label="Theme">' + [['dark', 'Dark'], ['light', 'Light'], ['system', 'System']].map(function (t) {
+        var on = st.theme === t[0];
+        return '<button type="button" class="xk' + (on ? ' on' : '') + '" role="radio" aria-checked="' + on + '" data-act="stheme" data-v="' + t[0] + '"' + (t[0] === 'dark' ? '' : ' disabled') + '>' + t[1] + '</button>';
+      }).join('') + '</div>';
+      var logRow = '<div class="srow dis"><div class="st"><b>Session logging</b><span>Save each session to a file. Coming in a later version.</span></div><button type="button" class="sw" role="switch" aria-checked="false" aria-label="Session logging" disabled></button></div>';
+      return sCard([sRow('Theme', 'Light and System come in a later version. The terminal itself is always dark.', theme, 'wrap'),
+        sRow('Control lines', 'Show DTR, RTS, CTS, DSR, CD, RI and BREAK in the terminal.', sSwitch('signals', st.signals, 'Control lines')),
+        sRow('Button labels', 'Show the names under the icons of the bottom bar.', sSwitch('labels', st.labels, 'Button labels')), logRow]);
+    }
+    return sCard([sRow('NexTerm', 'A USB serial terminal for Android.', '<span class="mono mu">0.1.0</span>'),
+      sRow('License', 'Free software under the GNU General Public License v3.', '<span class="mono mu">GPL v3</span>')]) +
+      '<div class="lbl" style="margin-top:4px">Open-source libraries</div>' +
+      sCard([sRow('usb-serial-for-android', 'USB serial drivers, by mik3y.', '<span class="mono mu">3.12.0 · MIT</span>'),
+        sRow('Termux terminal-emulator and terminal-view', 'Terminal emulation and display.', '<span class="mono mu">GPL v3</span>'),
+        sRow('Roboto Mono', 'Monospaced font for values like VID:PID.', '<span class="mono mu">Apache 2.0</span>')]);
+  }
+  function catNav(d, ph) {
+    return scats().map(function (c) {
+      var sel = !ph && (d.sset || 'terminal') === c[0];
+      return '<button type="button" class="snavb' + (sel ? ' sel' : '') + '" data-act="scat" data-v="' + c[0] + '"' + (sel ? ' aria-current="page"' : '') + '>' + ms(c[1]) +
+        '<span class="sn"><b>' + c[2] + '</b></span>' + (ph ? ms('chevron_right') : '') + '</button>';
+    }).join('');
+  }
+  function catTitle(k) { return scats().filter(function (c) { return c[0] === k; })[0][2]; }
+  function catGrid(d) {
+    return scats().map(function (c) {
+      var sel = (d.sset || 'terminal') === c[0];
+      return '<button type="button" class="stile' + (sel ? ' sel' : '') + '" data-act="scat" data-v="' + c[0] + '"' + (sel ? ' aria-current="page"' : '') + '>' + ms(c[1]) + '<b>' + c[2] + '</b></button>';
+    }).join('');
+  }
+  function settingsTab(d) {
+    var k = d.sset || 'terminal';
+    // Narrow windows (tablet portrait): the sections sit in a grid on top (--scols sets the columns) and the settings go below at full width.
+    if (d.w < 840) {
+      return '<section class="main"><div class="ttl"><b>Settings</b></div><nav class="sgrid" aria-label="Settings sections">' + catGrid(d) + '</nav>' +
+        '<div class="sdiv h" role="separator"></div><div class="sdet full">' + catBody(d, k) + '</div></section>';
+    }
+    return '<section class="main' + (d.h < 500 ? ' sfix' : '') + '"><div class="ttl"><b>Settings</b></div><div class="setcols"><nav class="card snav" aria-label="Settings sections">' + catNav(d, false) + '</nav>' +
+      '<div class="sdiv v" role="separator" aria-orientation="vertical"></div><div class="sdet">' + catBody(d, k) + '</div></div></section>';
+  }
+  function settingsPh(d) {
+    if (!d.sset) return '<div class="hdr"><b>Settings</b></div><div class="content"><nav class="card snav" aria-label="Settings sections">' + catNav(d, true) + '</nav></div>';
+    return '<div class="hdr pg"><button type="button" class="gear" data-act="sback" aria-label="Back">' + ms('arrow_back') + '</button><b>' + catTitle(d.sset) + '</b></div><div class="content">' + catBody(d, d.sset) + '</div>';
+  }
+
+  // ---- tablet ----
+  function railItem(d, key, icon, label) {
+    var led = key === 'home' && S.session ? '<b class="led"></b>' : '';
+    var nl = d.set.labels === false;
+    return '<button type="button" class="it' + (d.tab === key ? ' on' : '') + '" data-act="tab" data-v="' + key + '"' + (nl ? ' aria-label="' + label + '" title="' + label + '"' : '') + '><span class="ico">' + ms(icon) + led + '</span>' + (nl ? '' : label) + '</button>';
+  }
+  function rowTab(a, d) {
+    var open = d.open === a.id;
+    return '<div class="rw' + (open ? ' sel open' : '') + '" data-act="toggle" data-id="' + a.id + '" role="button" tabindex="0" aria-expanded="' + open + '">' +
+      ms('usb', 'mu') + '<div style="flex:1"><div style="font-size:15px;font-weight:500">' + a.name + '</div><div class="mono mu" style="font-size:12px">' + a.vp + ' · ' + a.path + '</div></div>' +
+      chip(a) + iconBtn(!!a.profile, false, 'connect', a.id) + '</div>' + (open ? accHtml(a, 'idle') : '');
+  }
+  function homeTab(d) {
+    if (S.session) {
+      var s = S.session, a = ad(s.id), open = d.open === skey(), last = S.hist[S.hist.length - 1], spd = last ? last[0] : 0, comp = d.h < 500;
+      var openBtn = '<button type="button" class="btn p" data-act="tab" data-v="terminal">Open terminal</button>', resetBtn = '<button type="button" class="btn" data-act="resetc">Reset counters</button>';
+      return '<section class="main' + (comp ? ' scomp' : '') + '"><div class="ttl"><b>Active session</b><span style="flex:1"></span>' + openBtn + resetBtn + '<button type="button" class="btn x" data-act="disconnect">Disconnect</button></div>' +
+        '<div class="card sessbox"><div class="sess tog' + (open ? ' open' : '') + '" data-act="toggle" data-id="' + skey() + '" role="button" tabindex="0" aria-expanded="' + open + '">' +
+        '<b class="led"></b><div style="flex:1"><div class="nm">' + s.name + '</div><div class="dt mono mu">' + a.name + ' · ' + a.vp + ' · ' + a.path + '</div></div>' +
+        '<div class="mono" style="text-align:right">' + s.cfg + '<div class="mu" style="font-size:12px;font-family:var(--ui)">' + flowTxt(s.flow) + '</div></div></div>' +
+        (open ? accHtml(a, 'active') : '') + '</div>' +
+        '<div class="stats">' + tile('Duration', dur(Date.now() - s.t0)) + tile('Received', fmtB(s.rx)) + tile('Sent', fmtB(s.tx)) +
+        tile('Receive speed', spd + ' B/s') + tile('Errors', '' + s.err, s.err > 0) + tile('Last activity', 'now') + '</div>' +
+        trafficCard(true) +
+        '</section>';
+    }
+    if (S.ended) {
+      var e = S.ended, ea = ad(e.id), eopen = d.open === skey();
+      return '<section class="main' + (d.h < 500 ? ' scomp' : '') + '"><div class="ttl"><b>Session ended</b><span style="flex:1"></span><button type="button" class="btn" data-act="close">Close</button><button type="button" class="btn p" data-act="reconnect">Reconnect</button></div>' + banner(bannerText(d, e)) +
+        '<div class="card sessbox"><div class="sess tog' + (eopen ? ' open' : '') + '" data-act="toggle" data-id="' + skey() + '" role="button" tabindex="0" aria-expanded="' + eopen + '">' +
+        '<b class="led hollow"></b><div style="flex:1"><div class="nm" style="display:flex;align-items:center;gap:10px">' + e.name + adChip(ea) + '</div><div class="dt mono mu">' + ea.name + ' · ' + ea.vp + ' · ' + ea.path + '</div></div>' +
+        '<div class="mono" style="text-align:right">' + e.cfg + '<div class="mu" style="font-size:12px;font-family:var(--ui)">' + flowTxt(e.flow) + '</div></div></div>' +
+        (eopen ? accHtml(ea, 'ended') : '') + '</div>' +
+        '<div class="stats">' + tile('Duration', dur(e.dur)) + tile('Received', fmtB(e.rx)) + tile('Sent', fmtB(e.tx)) + tile('Receive speed', '—') + tile('Errors', '' + e.err, e.err > 0) + tile('Ended', clock(e.at)) + '</div>' +
+        trafficCard(true, e.hist, true) + '</section>';
+    }
+    var list = plugged();
+    return '<section class="main"><div class="ttl"><b>Home</b><span class="mu" style="font-size:14px">No active session</span></div>' +
+      '<div class="lbl">Connected adapters</div>' +
+      (list.length ? '<div class="card lst">' + list.map(function (a) { return rowTab(a, d); }).join('') + '</div>' : emptyHtml()) + '</section>';
+  }
+  function bodyTab(d) {
+    var main = d.tab === 'home' ? homeTab(d) : d.tab === 'profiles' ? profilesTab(d) : d.tab === 'settings' ? settingsTab(d) : d.tab === 'terminal' && (S.session || S.ended) ? termTab(d) : '<section class="main"><div class="ttl"><b>' + { terminal: 'Terminal', profiles: 'Profiles', settings: 'Settings' }[d.tab] + '</b></div>' + holdHtml(d, d.tab) + '</section>';
+    var kb = d.hw === 'phone' && d.kbd && d.tab === 'terminal' && S.session;
+    var rail = kb ? '' : '<nav class="rail' + (d.set.labels === false ? ' nl' : '') + '" aria-label="Sections">' + railItem(d, 'home', 'home', 'Home') + railItem(d, 'terminal', 'terminal', 'Terminal') +
+      railItem(d, 'profiles', 'bookmarks', 'Profiles') + '<div style="margin-top:auto">' + railItem(d, 'settings', 'settings', 'Settings') + '</div></nav>';
+    return '<div class="body">' + rail + main + '</div>' + (kb ? kbdHtml() : d.hw === 'phone' ? '<div class="gest"><i></i></div>' : '');
+  }
+
+  // ---- phone ----
+  function rowPh(a, d) {
+    var open = d.open === a.id;
+    return '<div class="rw' + (open ? ' sel open' : '') + '" data-act="toggle" data-id="' + a.id + '" role="button" tabindex="0" aria-expanded="' + open + '">' + ms('usb', 'mu') +
+      '<div style="flex:1;min-width:0"><div style="font-size:15px;font-weight:500">' + a.name + '</div><div class="mono mu" style="font-size:12px">' + a.vp + '</div>' +
+      '<div style="margin-top:6px">' + chip(a) + '</div></div>' +
+      iconBtn(!!a.profile, true, 'connect', a.id) + '</div>' + (open ? accHtml(a, 'idle') : '');
+  }
+  function homePh(d) {
+    if (S.session) {
+      var s = S.session, a = ad(s.id), last = S.hist[S.hist.length - 1], spd = last ? last[0] : 0;
+      var open = d.open === skey();
+      return '<div class="hdr"><b>Home</b></div><div class="content"><div class="lbl">Active session</div>' +
+        '<div class="card sessbox"><div class="sess tog' + (open ? ' open' : '') + '" data-act="toggle" data-id="' + skey() + '" role="button" tabindex="0" aria-expanded="' + open + '"><div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:10px"><b class="led"></b><span class="nm">' + s.name + '</span></div>' +
+        '<div class="dt mono mu" style="margin-top:4px">' + a.name + ' · ' + a.vp + '</div><div class="dt mono mu">' + s.cfg + ' · ' + flowTxt(s.flow) + '</div></div></div>' + (open ? accHtml(a, 'active') : '') + '</div>' +
+        '<div class="stats">' + tile('Duration', dur(Date.now() - s.t0)) + tile('Received', fmtB(s.rx)) + tile('Sent', fmtB(s.tx)) + tile('Receive speed', spd + ' B/s') + tile('Errors', '' + s.err, s.err > 0) + tile('Last activity', 'now') + '</div>' +
+        trafficCard(false) +
+        '<div class="stk"><div class="acts"><button type="button" class="btn p" data-act="tab" data-v="terminal">Open terminal</button><button type="button" class="btn" data-act="resetc">Reset counters</button></div><button type="button" class="btn x" data-act="disconnect">Disconnect</button></div></div>';
+    }
+    if (S.ended) {
+      var e = S.ended, ea = ad(e.id), eopen = d.open === skey();
+      return '<div class="hdr"><b>Home</b></div><div class="content"><div class="lbl">Session ended</div>' + banner(bannerText(d, e)) +
+        '<div class="card sessbox"><div class="sess tog' + (eopen ? ' open' : '') + '" data-act="toggle" data-id="' + skey() + '" role="button" tabindex="0" aria-expanded="' + eopen + '"><div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:10px"><b class="led hollow"></b><span class="nm">' + e.name + '</span><span style="margin-left:auto">' + adChip(ea) + '</span></div>' +
+        '<div class="dt mono mu" style="margin-top:4px">' + ea.name + ' · ' + ea.vp + '</div><div class="dt mono mu">' + e.cfg + ' · ' + flowTxt(e.flow) + '</div></div></div>' + (eopen ? accHtml(ea, 'ended') : '') + '</div>' +
+        '<div class="stats">' + tile('Duration', dur(e.dur)) + tile('Received', fmtB(e.rx)) + tile('Sent', fmtB(e.tx)) + tile('Receive speed', '—') + tile('Errors', '' + e.err, e.err > 0) + tile('Ended', clock(e.at)) + '</div>' +
+        trafficCard(false, e.hist, true) +
+        '<div class="acts"><button type="button" class="btn p" data-act="reconnect">Reconnect</button><button type="button" class="btn" data-act="close">Close</button></div></div>';
+    }
+    var list = plugged();
+    return '<div class="hdr"><b>Home</b></div><div class="content"><div class="lbl">Connected adapters</div>' +
+      (list.length ? '<div class="card lst">' + list.map(function (a) { return rowPh(a, d); }).join('') + '</div>' : emptyHtml()) + '</div>';
+  }
+  function bodyPh(d) {
+    var view;
+    if (d.tab === 'home') view = homePh(d);
+    else if (d.tab === 'profiles') view = profilesPh(d);
+    else if (d.tab === 'settings') view = settingsPh(d);
+    else if (d.tab === 'terminal' && (S.session || S.ended)) view = termPh(d);
+    else view = '<div class="hdr"><b>' + { terminal: 'Terminal', profiles: 'Profiles', settings: 'Settings' }[d.tab] + '</b></div><div class="content">' + holdHtml(d, d.tab) + '</div>';
+    var bt = function (key, icon, label) {
+      var led = key === 'home' && S.session ? '<b class="led"></b>' : '';
+      var nl = d.set.labels === false;
+      return '<button type="button" class="it' + (d.tab === key ? ' on' : '') + '" data-act="tab" data-v="' + key + '"' + (nl ? ' aria-label="' + label + '" title="' + label + '"' : '') + '><span class="ico">' + ms(icon) + led + '</span>' + (nl ? '' : label) + '</button>';
+    };
+    var navH = '<nav class="bt' + (d.set.labels === false ? ' nl' : '') + '" aria-label="Sections">' + bt('home', 'home', 'Home') + bt('terminal', 'terminal', 'Terminal') + bt('profiles', 'bookmarks', 'Profiles') + bt('settings', 'settings', 'Settings') + '</nav>';
+    var kb = d.tab === 'terminal' && d.kbd && S.session;
+    var nav = kb ? kbdHtml() : navH;
+    return view + nav + (kb ? '' : '<div class="gest"><i></i></div>');
+  }
+
+  function scroller(d) { return d.el.querySelector('.sfix .sdet') || d.el.querySelector('.content, .main'); }
+  function render(d) {
+    d.el.style.setProperty('--tfs', d.set.size + 'px');
+    var full = !!d.full && d.tab === 'terminal' && !!S.session;
+    var h = full ? fullHtml(d) : sb(d.hw === 'phone' ? 'ph' : 'tab') + (d.kind === 'tab' ? bodyTab(d) : bodyPh(d));
+    if (d.confirm) h += confirmHtml(d);
+    else if (d.sheet) h += formHtml(d);
+    else if (d.csheet) h += d.cconfirm ? cconfirmHtml(d) : cformHtml(d);
+    else if (d.dsheet) h += dformHtml(d);
+    if (d.toast) h += '<div class="toast">' + d.toast + '</div>';
+    var key = d.tab + '|' + (d.tab === 'settings' ? (d.sset || '') : '');
+    var old = scroller(d), top = old && d.rtab === key ? old.scrollTop : 0;
+    var tbOld = d.el.querySelector('.tbody'), tbTop = tbOld ? tbOld.scrollTop : 0;
+    d.el.innerHTML = h;
+    d.rtab = key;
+    var tb = d.el.querySelector('.tbody');
+    if (tb) {
+      // Same terminal and view with Autoscroll off: keep the place; otherwise start at the newest row.
+      var sameView = tbOld && d.tview === (d.view || 'console') && d.tab === 'terminal';
+      if (d.set.auto === false && sameView) tb.scrollTop = tbTop;
+      else if (d.follow !== false) tb.scrollTop = tb.scrollHeight; else tb.scrollTop = tbTop;
+      d.tview = d.view || 'console';
+      tb.addEventListener('scroll', function () { d.follow = tb.scrollHeight - tb.scrollTop - tb.clientHeight < 40; });
+    }
+    fitTerm(d);
+    if (d.capFocus) focusCap(d); else if (d.compFocus) focusComp(d);
+    var sc = scroller(d);
+    if (!sc) return;
+    if (top) sc.scrollTop = top;
+    if (sc.scrollHeight <= sc.clientHeight + 1) return;
+    var th = document.createElement('div');
+    th.className = 'sthumb';
+    d.el.appendChild(th);
+    var place = function () {
+      var vh = sc.clientHeight, len = Math.max(28, vh * vh / sc.scrollHeight);
+      th.style.height = len + 'px';
+      th.style.top = (sc.offsetTop + 4 + (sc.scrollTop / (sc.scrollHeight - vh)) * (vh - len - 8)) + 'px';
+    };
+    place();
+    sc.addEventListener('scroll', place);
+  }
+  /* Columns x rows of the console, from the real size of the terminal area and one mono character; also how many bytes a Hex row holds. */
+  function fitTerm(d) {
+    var tb = d.el.querySelector('.tbody');
+    if (!tb) return;
+    var cs = getComputedStyle(tb), fs = parseFloat(cs.fontSize), lh = parseFloat(cs.lineHeight) || fs * 1.45;
+    var m = document.createElement('span');
+    m.className = 'm'; m.style.cssText = 'position:absolute;visibility:hidden;white-space:pre;';
+    m.textContent = new Array(101).join('0');
+    tb.appendChild(m);
+    var cw = m.offsetWidth / 100;
+    tb.removeChild(m);
+    var iw = tb.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight), ih = tb.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
+    if (!cw || iw <= 0 || ih <= 0) return;
+    var txt = Math.floor(iw / cw) + '×' + Math.floor(ih / lh);
+    [].slice.call(d.el.querySelectorAll('.tsize')).forEach(function (el) { el.textContent = txt; });
+    if (d.view === 'hex') {
+      var per = Math.max(1, Math.floor(((iw - 1.1 * fs * 0.85 - 20) / cw + 1) / 4));
+      if (per !== d.hexPer) { d.hexPer = per; tb.innerHTML = bodyHtml(d); if (d.follow !== false) tb.scrollTop = tb.scrollHeight; }
+    }
+  }
+  function renderAll() { devs.forEach(render); }
+
+  // ---- events ----
+  document.addEventListener('click', function (e) {
+    var el = e.target.closest('[data-act]');
+    if (!el) return;
+    var dv = el.closest('.dv');
+    if (!dv) return;
+    var d = devs.filter(function (x) { return x.el === dv; })[0];
+    if (!d) return;
+    var act = el.dataset.act, id = el.dataset.id;
+    if (act === 'profile' || act === 'pname' || act === 'fsel' || act === 'fcustom' || act === 'comp' || act === 'cap' || act === 'cname' || act === 'ccmd' || act === 'csel' || act === 'ssize' || act === 'sselect') return;
+    d.capFocus = act === 'focuscap'; d.compFocus = act === 'send' || act === 'enter' || act === 'rawmode';
+    if (act === 'scrim' && e.target !== el) return;
+    switch (act) {
+      case 'full': d.full = !d.full; d.vmenu = false; d.cmds = false; break;
+      case 'tab': d.full = false; if (el.dataset.v === 'settings' && d.tab === 'settings' && d.kind === 'ph') d.sset = null; d.tab = el.dataset.v; d.kbd = false; d.cmds = false; d.vmenu = false; break;
+      case 'toggle': d.open = d.open === id ? null : id; break;
+      case 'connect': connect(d, id); break;
+      case 'disconnect': endSession(''); break;
+      case 'resetc': if (S.session) { S.session.rx = 0; S.session.tx = 0; S.session.err = 0; } break;
+      case 'driver': var da = ad(id); d.dsheet = { aid: da.id, pick: da.drv || 'auto' }; break;
+      case 'dpick': d.dsheet.pick = el.dataset.v; break;
+      case 'dsheetx': d.dsheet = null; break;
+      case 'dsheetgo': var dt = ad(d.dsheet.aid); dt.drv = d.dsheet.pick === 'auto' ? null : d.dsheet.pick; toast(d, d.dsheet.pick === 'auto' ? 'Driver set to automatic' : 'Driver set to ' + d.dsheet.pick); d.dsheet = null; break;
+      case 'refresh': toast(d, 'No new adapters found'); break;
+      case 'notice-x': if (S.ended) S.ended.reason = ''; break;
+      case 'reconnect': reconnect(d); break;
+      case 'close': S.ended = null; break;
+      case 'scrim': d.sheet = null; d.confirm = null; d.csheet = null; d.cconfirm = false; d.dsheet = null; break;
+      case 'sheetx': d.sheet = null; break;
+      case 'ptoggle': d.popen = d.popen === id ? null : id; break;
+      case 'pnew': d.sheet = newForm('new', (plugged()[0] || S.adapters[0]).id, null); break;
+      case 'pedit': var xe = findP(id); d.sheet = newForm('edit', xe.a.id, xe.p); break;
+      case 'pdelete': d.confirm = id; break;
+      case 'cdelok': delProfile(d); break;
+      case 'cdelx': d.confirm = null; break;
+      case 'pconnect': pconnect(d, id); break;
+      case 'view': d.view = el.dataset.v; d.hexerr = false; d.follow = true; d.vmenu = false; break;
+      case 'tdock': d.dock = !d.dock; break;
+      case 'cmds': d.cmds = !d.cmds; d.vmenu = false; break;
+      case 'vmenu': d.vmenu = !d.vmenu; d.cmds = false; break;
+      case 'vmx': d.vmenu = false; break;
+      case 'cmdx': d.cmds = false; break;
+      case 'kbd': d.kbd = !d.kbd; break;
+      case 'focuscap': if (d.hw === 'phone') d.kbd = true; break;
+      case 'xkey': if (el.dataset.v === 'CTRL') d.ctrl = !d.ctrl; break;
+      case 'cmd': sendCmd(CMDS[+el.dataset.v]); d.cmds = false; break;
+      case 'cedit': if (CMDS[+el.dataset.v]) { d.csheet = newCForm('edit', +el.dataset.v); d.cconfirm = false; d.cmds = false; } break;
+      case 'cmdnew': d.csheet = newCForm('new'); d.cconfirm = false; d.cmds = false; break;
+      case 'scat': d.sset = el.dataset.v; break;
+      case 'sback': d.sset = null; break;
+      case 'sset': d.set[el.dataset.v] = !d.set[el.dataset.v]; break;
+      case 'skey':
+        var kk = el.dataset.v, ki = d.set.keys.indexOf(kk);
+        if (ki >= 0) { d.set.keys.splice(ki, 1); if (kk === 'CTRL') d.ctrl = false; } else d.set.keys.push(kk);
+        break;
+      case 'stheme': if (el.dataset.v !== 'dark') toast(d, 'Only the dark theme is designed so far'); break;
+      case 'csheetx': d.csheet = null; d.cconfirm = false; break;
+      case 'csheetgo': submitC(d); break;
+      case 'cdel': d.cconfirm = true; break;
+      case 'ccdelx': d.cconfirm = false; break;
+      case 'ccdelok': CMDS.splice(d.csheet.i, 1); d.csheet = null; d.cconfirm = false; toast(d, 'Command deleted'); break;
+      case 'line': if (S.session) { S.lines[el.dataset.v] = !S.lines[el.dataset.v]; pushEntry('sys', [], el.dataset.v.toUpperCase() + ' ' + (S.lines[el.dataset.v] ? 'on' : 'off')); } break;
+      case 'brk': if (S.session) { pushEntry('sys', [], 'BREAK sent (100 ms)'); toast(d, 'BREAK sent (100 ms)'); } break;
+      case 'send': submitComp(d); break;
+      case 'rawmode': d.raw = el.dataset.v === 'raw'; d.hexerr = false; break;
+      case 'enter': if (S.session) { var eo = ['CR', 'LF', 'CR+LF']; S.session.enter = eo[(eo.indexOf(S.session.enter) + 1) % 3]; } break;
+      case 'savetoggle': d.sheet.save = !d.sheet.save; d.sheet.err = ''; break;
+      case 'sheetgo': submitForm(d); break;
+    }
+    renderAll();
+    if ((d.sheet && act === 'sheetgo') || (d.csheet && act === 'csheetgo')) focusBad(d);
+    if (d.csheet && act === 'cmdnew') focusC(d, 'cname');
+    if (d.sheet && ((act === 'savetoggle' && d.sheet.save) || act === 'pnew')) focusName(d);
+  });
+  function focusBad(d) {
+    var i = d.el.querySelector('input.bad');
+    if (i) { i.focus(); i.setSelectionRange(i.value.length, i.value.length); }
+  }
+  function focusC(d, act) {
+    var i = d.el.querySelector('input[data-act="' + act + '"]');
+    if (i) { i.focus(); i.setSelectionRange(i.value.length, i.value.length); }
+  }
+  function focusName(d) {
+    var i = d.el.querySelector('input[data-act="pname"]');
+    if (i) { i.focus(); i.setSelectionRange(i.value.length, i.value.length); }
+  }
+  document.addEventListener('input', function (e) {
+    var t = e.target;
+    if (!(t.matches && (t.matches('input[data-act="pname"]') || t.matches('input[data-act="fcustom"]')))) return;
+    var dv = t.closest('.dv'), d = devs.filter(function (x) { return x.el === dv; })[0];
+    if (!d || !d.sheet) return;
+    if (t.dataset.act === 'pname') {
+      d.sheet.name = t.value;
+      if (d.sheet.err) { d.sheet.err = ''; render(d); focusName(d); }
+    } else {
+      var digits = t.value.replace(/\D/g, '');
+      if (digits !== t.value) t.value = digits;
+      d.sheet.custom = digits;
+      if (d.sheet.berr) { d.sheet.berr = false; render(d); var c = d.el.querySelector('input[data-act="fcustom"]'); if (c) { c.focus(); c.setSelectionRange(c.value.length, c.value.length); } }
+    }
+  });
+  document.addEventListener('input', function (e) {
+    var t = e.target;
+    if (!(t.matches && (t.matches('input[data-act="cname"]') || t.matches('input[data-act="ccmd"]')))) return;
+    var dv = t.closest('.dv'), d = devs.filter(function (x) { return x.el === dv; })[0];
+    if (!d || !d.csheet) return;
+    var f = d.csheet;
+    if (t.dataset.act === 'cname') { f.name = t.value; if (f.nerr) { f.nerr = ''; render(d); focusC(d, 'cname'); } }
+    else { f.cmd = t.value; if (f.cerr) { f.cerr = ''; render(d); focusC(d, 'ccmd'); } }
+  });
+  document.addEventListener('input', function (e) {
+    var t = e.target;
+    if (!(t.matches && t.matches('input[data-act="ssize"]'))) return;
+    var dv = t.closest('.dv'), d = devs.filter(function (x) { return x.el === dv; })[0];
+    if (!d) return;
+    d.set.size = +t.value;
+    d.el.style.setProperty('--tfs', d.set.size + 'px');
+    var v = d.el.querySelector('.sval');
+    if (v) v.textContent = d.set.size + ' sp';
+  });
+  // Pinch on a trackpad (or Ctrl + wheel) over the terminal changes the text size, like pinching on a phone.
+  document.addEventListener('wheel', function (e) {
+    if (!e.ctrlKey) return;
+    var tb = e.target.closest && e.target.closest('.tbody');
+    if (!tb) return;
+    var dv = tb.closest('.dv'), d = devs.filter(function (x) { return x.el === dv; })[0];
+    if (!d) return;
+    e.preventDefault();
+    d.pinch = (d.pinch || 0) - e.deltaY;
+    if (Math.abs(d.pinch) < 6) return;
+    var n = Math.max(7, Math.min(24, d.set.size + (d.pinch > 0 ? 1 : -1)));
+    d.pinch = 0;
+    if (n === d.set.size) return;
+    d.set.size = n;
+    toast(d, 'Text size ' + n + ' sp');
+    render(d);
+  }, { passive: false });
+  document.addEventListener('keydown', function (e) {
+    var t = e.target;
+    if (e.key === 'Enter' && t.matches && (t.matches('input[data-act="cap"]') || t.matches('input[data-act="comp"]'))) {
+      var dv = t.closest('.dv'), d = devs.filter(function (x) { return x.el === dv; })[0];
+      if (!d) return;
+      e.preventDefault();
+      if (t.dataset.act === 'cap') { if (S.session) sendBytes(toBytes(d.typed || ''), true, d.typed || ''); d.typed = ''; d.capFocus = true; d.compFocus = false; }
+      else { submitComp(d); d.compFocus = true; d.capFocus = false; }
+      renderAll();
+      return;
+    }
+    if ((e.key === 'Enter' || e.key === ' ') && t.matches && t.matches('[role="button"][data-act]')) { e.preventDefault(); t.click(); }
+  });
+  document.addEventListener('input', function (e) {
+    var t = e.target;
+    if (!(t.matches && (t.matches('input[data-act="cap"]') || t.matches('input[data-act="comp"]')))) return;
+    var dv = t.closest('.dv'), d = devs.filter(function (x) { return x.el === dv; })[0];
+    if (!d) return;
+    if (t.dataset.act === 'cap') { d.typed = t.value; updateTerm(d); }
+    else { d.comp = t.value; if (d.hexerr) { d.hexerr = false; d.compFocus = true; render(d); } }
+  });
+  document.addEventListener('change', function (e) {
+    var t = e.target;
+    if (t.matches && (t.matches('input[data-act="ssize"]') || t.matches('select[data-act="sselect"]'))) {
+      var sv = t.closest('.dv'), sd = devs.filter(function (x) { return x.el === sv; })[0];
+      if (!sd) return;
+      if (t.dataset.act === 'sselect') sd.set[t.dataset.f] = +t.value; else sd.set.size = +t.value;
+      render(sd);
+      return;
+    }
+    if (t.matches && t.matches('select[data-act="csel"]')) {
+      var cv = t.closest('.dv'), cd = devs.filter(function (x) { return x.el === cv; })[0];
+      if (!cd || !cd.csheet) return;
+      cd.csheet[t.dataset.f] = t.value;
+      if (t.dataset.f === 'kind') cd.csheet.cerr = '';
+      render(cd);
+      return;
+    }
+    if (t.matches && t.matches('select[data-act="profile"]')) { ad(t.dataset.id).profile = t.value; renderAll(); }
+    if (t.matches && t.matches('select[data-act="fsel"]')) {
+      var dv = t.closest('.dv'), d = devs.filter(function (x) { return x.el === dv; })[0];
+      if (!d || !d.sheet) return;
+      var f = d.sheet, k = t.dataset.f;
+      f[k] = t.value;
+      if (k === 'aid' && ad(f.aid).flow.split(', ').indexOf(f.flow) < 0) f.flow = 'None';
+      if (k === 'baud' && f.baud !== 'custom') f.berr = false;
+      render(d);
+      if (k === 'baud' && f.baud === 'custom') { var c = d.el.querySelector('input[data-act="fcustom"]'); if (c) c.focus(); }
+    }
+  });
+  // The round button can be dragged anywhere inside the terminal area; a plain tap still toggles full screen.
+  var fabDrag = null, fabBlock = 0;
+  document.addEventListener('pointerdown', function (e) {
+    if (e.button > 0) return;
+    var fab = e.target.closest && e.target.closest('.fab');
+    if (!fab) return;
+    var dv = fab.closest('.dv'), d = devs.filter(function (x) { return x.el === dv; })[0];
+    if (!d) return;
+    var cont = fab.parentElement, q = d.fabPos[fabKey(d)] || { x: 1, y: 1 };
+    fabDrag = { d: d, fab: fab, id: e.pointerId, x0: e.clientX, y0: e.clientY, sc: fab.getBoundingClientRect().width / fab.offsetWidth || 1,
+      W: cont.clientWidth - 72, H: cont.clientHeight - 72, fx: q.x, fy: q.y, moved: false };
+    try { fab.setPointerCapture(e.pointerId); } catch (err) { /* synthetic events have no capture */ }
+  });
+  document.addEventListener('pointermove', function (e) {
+    var g = fabDrag;
+    if (!g || e.pointerId !== g.id) return;
+    var dx = (e.clientX - g.x0) / g.sc, dy = (e.clientY - g.y0) / g.sc;
+    if (!g.moved && Math.hypot(dx, dy) < 6) return;
+    g.moved = true; g.fab.classList.add('drag');
+    var x = g.W > 0 ? Math.min(1, Math.max(0, g.fx + dx / g.W)) : 1, y = g.H > 0 ? Math.min(1, Math.max(0, g.fy + dy / g.H)) : 1;
+    g.d.fabPos[fabKey(g.d)] = { x: x, y: y };
+    g.fab.style.left = 'calc(12px + (100% - 72px) * ' + x + ')';
+    g.fab.style.top = 'calc(12px + (100% - 72px) * ' + y + ')';
+  });
+  function fabEnd(e) {
+    var g = fabDrag;
+    if (!g || (e && e.pointerId !== g.id)) return;
+    fabDrag = null; g.fab.classList.remove('drag');
+    if (g.moved) fabBlock = Date.now() + 150;
+  }
+  document.addEventListener('pointerup', fabEnd);
+  document.addEventListener('pointercancel', fabEnd);
+  document.addEventListener('click', function (e) {
+    if (Date.now() < fabBlock) { e.stopImmediatePropagation(); e.preventDefault(); }
+  }, true);
+  function plug(id, on) {
+    var a = ad(id); a.plugged = on;
+    if (!on) {
+      if (S.session && S.session.id === id) endSession('The ' + a.name + ' adapter was unplugged.');
+      devs.forEach(function (d) {
+        if (d.open === id) d.open = null;
+        if (d.sheet && d.sheet.mode === 'setup' && d.sheet.aid === id) d.sheet = null;
+        if (d.dsheet && d.dsheet.aid === id) d.dsheet = null;
+      });
+    } else if (S.ended && !S.session && S.ended.id === id && S.ended.reason) {
+      var rd = devs.filter(function (x) { return x.set.reconnect; })[0];
+      if (rd) { resumeSession(rd); devs.forEach(function (v) { toast(v, 'Session resumed'); }); }
+    }
+    renderAll();
+  }
+  $('#p-ch340').addEventListener('change', function (e) { plug('ch340', e.target.checked); });
+  $('#p-ft232').addEventListener('change', function (e) { plug('ft232', e.target.checked); });
+  $('#reset').addEventListener('click', function () { fresh(); renderAll(); layout(); });
+
+  setInterval(function () {
+    if (!S.session) return;
+    S.n++;
+    var line = S.boot.length ? S.boot.shift() : 'T=' + (23 + Math.random() * 0.8).toFixed(1) + ' RH=' + (40 + Math.random() * 2).toFixed(1) + ' P=1013';
+    var b = toBytes(line).concat([13, 10]);
+    pushEntry('rx', b);
+    S.session.rx += b.length;
+    if (Math.random() < 0.03) S.session.err++;
+    S.hist.push([b.length, S.txTick]); S.hist.shift(); S.txTick = 0;
+    devs.forEach(function (d) { if (d.tab === 'terminal') updateTerm(d); else render(d); });
+  }, 1000);
+
+  // ---- scale ----
+  var stage = $('#stage'), boxes = [].slice.call(document.querySelectorAll('.box')), label = $('#scaleLabel');
+  var zbtns = [].slice.call(document.querySelectorAll('[data-z]')), mode = 'fit';
+  function layout() {
+    var cw = stage.clientWidth, gap = 32, s, ws = boxes.map(function (b) { return +b.dataset.w; });
+    var sum = ws.reduce(function (a, b) { return a + b; }, 0), mx = Math.max.apply(null, ws);
+    if (mode === 'fit') { s = cw >= 1000 ? (cw - gap - 24) / sum : cw / mx; s = Math.min(1, s); } else { s = +mode; }
+    boxes.forEach(function (b) {
+      b.style.width = Math.round(+b.dataset.w * s) + 'px';
+      b.style.height = Math.round(+b.dataset.h * s) + 'px';
+      b.firstElementChild.style.transform = 'scale(' + s + ')';
+    });
+    label.textContent = 'scala ' + Math.round(s * 100) + '%';
+  }
+  zbtns.forEach(function (b) {
+    b.addEventListener('click', function () {
+      mode = b.dataset.z;
+      zbtns.forEach(function (x) { x.setAttribute('aria-pressed', String(x === b)); });
+      layout();
+    });
+  });
+  window.addEventListener('resize', layout);
+  [].slice.call(document.querySelectorAll('[data-rot]')).forEach(function (b) {
+    b.addEventListener('click', function () { rotate(devs.filter(function (d) { return d.el === $(b.dataset.rot === 'tab' ? '#dev-tab' : '#dev-ph'); })[0]); });
+  });
+
+  fresh(); renderAll(); layout();
+  requestAnimationFrame(layout);
+})();
+</script>
+</body>
+</html>

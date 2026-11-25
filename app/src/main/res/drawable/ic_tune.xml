@@ -1,0 +1,8 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp" android:height="24dp" android:viewportWidth="24" android:viewportHeight="24">
+    <!-- Thin "tune" glyph: three sliders. -->
+    <path android:strokeColor="#FF000000" android:strokeWidth="1.5" android:strokeLineCap="round" android:strokeLineJoin="round"
+        android:pathData="M3,6H9.5M14.5,6H21M3,12H4.5M9.5,12H21M3,18H12.5M17.5,18H21" />
+    <path android:strokeColor="#FF000000" android:strokeWidth="1.5" android:strokeLineCap="round" android:strokeLineJoin="round"
+        android:pathData="M12,3.5A2.5,2.5 0 1 0 12,8.5A2.5,2.5 0 1 0 12,3.5ZM7,9.5A2.5,2.5 0 1 0 7,14.5A2.5,2.5 0 1 0 7,9.5ZM15,15.5A2.5,2.5 0 1 0 15,20.5A2.5,2.5 0 1 0 15,15.5Z" />
+</vector>

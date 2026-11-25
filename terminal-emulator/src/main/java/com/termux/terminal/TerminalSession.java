@@ -11,7 +11,7 @@ import java.util.UUID;
 /**
  * A terminal session: a {@link TerminalEmulator} coupled to an arbitrary byte transport.
  * <p>
- * MODIFIED BY NEXTTERM (2026-11-20): the original termux-app class spawned a local subprocess on a
+ * MODIFIED BY NEXTERM (2026-11-20): the original termux-app class spawned a local subprocess on a
  * pty through JNI. This version has no process. Bytes from the remote side are pushed in with
  * {@link #feed(byte[], int, int)} (from any thread), and bytes typed by the user go out through the
  * {@link Output} given to the constructor. The public surface used by {@code TerminalView} is

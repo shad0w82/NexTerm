@@ -444,6 +444,19 @@ public final class TerminalView extends View {
         return mEmulator == null ? 1 : mEmulator.getScreen().getActiveRows() + mTopRow - mEmulator.mRows;
     }
 
+    /** NexTerm: whether the view jumps to the newest output when something arrives (the default). When false it stays where it is. */
+    private boolean mAutoScroll = true;
+
+    /** NexTerm: turns following of new output on or off. Turning it on brings the view to the bottom at once. */
+    public void setAutoScroll(boolean autoScroll) {
+        if (mAutoScroll == autoScroll) return;
+        mAutoScroll = autoScroll;
+        if (autoScroll && mTopRow != 0) {
+            mTopRow = 0;
+            invalidate();
+        }
+    }
+
     public void onScreenUpdated() {
         if (mEmulator == null) return;
 
@@ -451,17 +464,22 @@ public final class TerminalView extends View {
         if (mTopRow < -rowsInHistory) mTopRow = -rowsInHistory;
 
         boolean skipScrolling = false;
-        if (isSelectingText()) {
-            // Do not scroll when selecting text.
+        if (isSelectingText() || !mAutoScroll) {
+            // Do not scroll when selecting text, or when autoscroll is off: the rows on screen stay put while new ones arrive.
             int rowShift = mEmulator.getScrollCounter();
             if (-mTopRow + rowShift > rowsInHistory) {
-                // .. unless we're hitting the end of history transcript, in which
-                // case we abort text selection and scroll to end.
-                stopTextSelectionMode();
+                // .. unless we're hitting the end of history transcript: a selection is aborted and the
+                // view scrolls to the end; without autoscroll it stays on the oldest row that is left.
+                if (isSelectingText()) {
+                    stopTextSelectionMode();
+                } else {
+                    mTopRow = -rowsInHistory;
+                    skipScrolling = true;
+                }
             } else {
                 skipScrolling = true;
                 mTopRow -= rowShift;
-                decrementYTextSelectionCursors(rowShift);
+                if (isSelectingText()) decrementYTextSelectionCursors(rowShift);
             }
         }
 

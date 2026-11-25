@@ -1,0 +1,14 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp" android:height="24dp" android:viewportWidth="24" android:viewportHeight="24">
+    <!-- Two unplugged plugs (plug and socket, facing each other along the diagonal): the Connect button. -->
+    <group android:pivotX="12" android:pivotY="12" android:rotation="-45">
+        <path android:strokeColor="#FF000000" android:strokeWidth="1.5" android:strokeLineCap="round" android:strokeLineJoin="round"
+            android:pathData="M8,7.5H5.5A4.5,4.5 0 0 0 5.5,16.5H8Z" />
+        <path android:strokeColor="#FF000000" android:strokeWidth="1.5" android:strokeLineCap="round" android:strokeLineJoin="round"
+            android:pathData="M8,10H12M8,14H12" />
+        <path android:strokeColor="#FF000000" android:strokeWidth="1.5" android:strokeLineCap="round" android:strokeLineJoin="round"
+            android:pathData="M16,7.5H18.5A4.5,4.5 0 0 1 18.5,16.5H16Z" />
+        <path android:strokeColor="#FF000000" android:strokeWidth="1.5" android:strokeLineCap="round" android:strokeLineJoin="round"
+            android:pathData="M19,10.5V13.5" />
+    </group>
+</vector>

@@ -1,0 +1,8 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp" android:height="24dp" android:viewportWidth="24" android:viewportHeight="24">
+    <!-- Thin outlined glyph drawn for the navigation bar. -->
+    <path android:strokeColor="#FF000000" android:strokeWidth="1.6" android:strokeLineCap="round" android:strokeLineJoin="round"
+        android:pathData="M18.64,9.80 L21.02,10.17 L21.02,13.83 L18.64,14.20 L18.26,15.14 L19.67,17.08 L17.08,19.67 L15.14,18.26 L14.20,18.64 L13.83,21.02 L10.17,21.02 L9.80,18.64 L8.86,18.26 L6.92,19.67 L4.33,17.08 L5.74,15.14 L5.36,14.20 L2.98,13.83 L2.98,10.17 L5.36,9.80 L5.74,8.86 L4.33,6.92 L6.92,4.33 L8.86,5.74 L9.80,5.36 L10.17,2.98 L13.83,2.98 L14.20,5.36 L15.14,5.74 L17.08,4.33 L19.67,6.92 L18.26,8.86Z" />
+    <path android:strokeColor="#FF000000" android:strokeWidth="1.6" android:strokeLineCap="round" android:strokeLineJoin="round"
+        android:pathData="M15,12A3,3 0 1 1 9,12A3,3 0 1 1 15,12Z" />
+</vector>

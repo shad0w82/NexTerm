@@ -1,0 +1,8 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp" android:height="24dp" android:viewportWidth="24" android:viewportHeight="24">
+    <!-- Two outlined bookmarks, drawn for the navigation bar (Profiles). -->
+    <path android:strokeColor="#FF000000" android:strokeWidth="1.8" android:strokeLineCap="round" android:strokeLineJoin="round"
+        android:pathData="M4,7A1,1 0 0 1 5,6H13A1,1 0 0 1 14,7V20L9,16.5L4,20Z" />
+    <path android:strokeColor="#FF000000" android:strokeWidth="1.8" android:strokeLineCap="round" android:strokeLineJoin="round"
+        android:pathData="M8,3.5H17A1,1 0 0 1 18,4.5V17" />
+</vector>

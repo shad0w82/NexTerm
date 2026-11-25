@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "dev.nextterm"
+    namespace = "dev.nexterm"
     compileSdk = 37
 
     defaultConfig {
-        applicationId = "dev.nextterm"
+        applicationId = "dev.nexterm"
         minSdk = 26
         targetSdk = 37
         versionCode = 1
@@ -19,6 +19,9 @@ android {
     buildTypes {
         release {
             isMinifyEnabled = false
+            // Personal test installs: signed with the debug key so the release build can replace the debug build in place and keep its data.
+            // A build to publish needs its own keystore.
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
     compileOptions {
@@ -36,8 +39,10 @@ dependencies {
     implementation(platform(libs.compose.bom))
     implementation(libs.compose.ui)
     implementation(libs.compose.material3)
+    implementation(libs.compose.material.icons.core)
     implementation(libs.compose.ui.tooling.preview)
     debugImplementation(libs.compose.ui.tooling)
     implementation(libs.usb.serial)
     implementation(project(":terminal-view"))
+    testImplementation(libs.junit)
 }
