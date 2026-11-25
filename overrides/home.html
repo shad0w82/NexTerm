@@ -1,0 +1,378 @@
+<!doctype html>
+{#- The home page of the site: a page of its own, not part of the Material theme. It has no connection with the pages
+    of the documentation except the colours, the fonts, the choice of the theme (kept in the same place as theirs, so a
+    choice made here holds there) and the facts of the repository. Selected by "template: home.html" in docs/index.md. -#}
+<html lang="en" data-scope="{{ base_url }}" data-repo="{{ config.repo_url | replace('https://github.com/', '') }}" data-palette='{{ config.theme.palette | tojson }}'>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ config.site_name }}: a USB serial terminal for Android</title>
+<meta name="description" content="{{ config.site_description | trim | e }}">
+<meta name="color-scheme" content="dark light">
+<meta name="theme-color" content="#0D1117">
+{% if page and page.canonical_url %}<link rel="canonical" href="{{ page.canonical_url }}">{% endif %}
+<link rel="icon" href="{{ base_url }}/assets/logo.svg" type="image/svg+xml">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="{{ config.site_name }}">
+<meta property="og:title" content="{{ config.site_name }}: a USB serial terminal for Android">
+<meta property="og:description" content="{{ config.site_description | trim | e }}">
+<meta property="og:url" content="{{ config.site_url }}">
+<meta property="og:image" content="{{ config.site_url }}guide/img/terminal-1-console-tablet.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="{{ base_url }}/stylesheets/home.css">
+<script>
+/* The theme before the first paint: the one chosen here or in the documentation, else the system's. */
+(function () {
+  try {
+    var d = document.documentElement, scope = new URL(d.getAttribute("data-scope"), location).pathname;
+    var p = JSON.parse(localStorage.getItem(scope + ".__palette")), c = p && p.color;
+    var light = c && c.media !== "(prefers-color-scheme)" ? c.scheme !== "slate" : matchMedia("(prefers-color-scheme: light)").matches;
+    d.setAttribute("data-scheme", light ? "light" : "dark");
+  } catch (e) {}
+})();
+</script>
+<script src="{{ base_url }}/javascripts/home.js" defer></script>
+</head>
+<body id="top">
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+<symbol id="i-usb" viewBox="0 0 24 24"><path d="M8 2c-1.1 0-2 .9-2 2v8H5v4l4 4v2h6v-2l4-4v-4h-1V4a2 2 0 0 0-2-2M8 4h8v8H8m1-5v2h2V7m2 0v2h2V7Z"/></symbol>
+<symbol id="i-terminal" viewBox="0 0 24 24"><path d="M20 19V7H4v12zm0-16a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zm-7 14v-2h5v2zm-3.42-4L5.57 9H8.4l3.3 3.3c.39.39.39 1.03 0 1.42L8.42 17H5.59z"/></symbol>
+<symbol id="i-send" viewBox="0 0 24 24"><path d="m2 21 21-9L2 3v7l15 2-15 2z"/></symbol>
+<symbol id="i-pulse" viewBox="0 0 24 24"><path d="M3 13h2.79l4.31-8.21 1.18 8.96 3.22-4.09L17.83 13H21v2h-4l-2.33-2.33-4.75 6.06-.98-7.42L7 15H3z"/></symbol>
+<symbol id="i-tune" viewBox="0 0 24 24"><path d="M3 17v2h6v-2zM3 5v2h10V5zm10 16v-2h8v-2h-8v-2h-2v6zM7 9v2H3v2h4v2h2V9zm14 4v-2H11v2zm-6-4h2V7h4V5h-4V3h-2z"/></symbol>
+<symbol id="i-devices" viewBox="0 0 24 24"><path d="M22 17h-4v-7h4m1-2h-6a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V9a1 1 0 0 0-1-1M4 6h18V4H4a2 2 0 0 0-2 2v11H0v3h14v-3H4z"/></symbol>
+<symbol id="i-download" viewBox="0 0 24 24"><path d="M5 20h14v-2H5m14-9h-4V3H9v6H5l7 7z"/></symbol>
+<symbol id="i-privacy" viewBox="0 0 24 24"><path d="M21 11c0 5.55-3.84 10.74-9 12-5.16-1.26-9-6.45-9-12V5l9-4 9 4zm-9 10c3.75-1 7-5.46 7-9.78V6.3l-7-3.12L5 6.3v4.92C5 15.54 8.25 20 12 21m2.8-10V9.5C14.8 8.1 13.4 7 12 7S9.2 8.1 9.2 9.5V11c-.6 0-1.2.6-1.2 1.2v3.5c0 .7.6 1.3 1.2 1.3h5.5c.7 0 1.3-.6 1.3-1.2v-3.5c0-.7-.6-1.3-1.2-1.3m-1.3 0h-3V9.5c0-.8.7-1.3 1.5-1.3s1.5.5 1.5 1.3z"/></symbol>
+<symbol id="i-code" viewBox="0 0 24 24"><path d="m14.6 16.6 4.6-4.6-4.6-4.6L16 6l6 6-6 6zm-5.2 0L4.8 12l4.6-4.6L8 6l-6 6 6 6z"/></symbol>
+<symbol id="i-scale" viewBox="0 0 24 24"><path d="M12 3c-1.27 0-2.4.8-2.82 2H3v2h1.95L2 14c-.47 2 1 3 3.5 3s4.06-1 3.5-3L6.05 7h3.12c.33.85.98 1.5 1.83 1.83V20H2v2h20v-2h-9V8.82c.85-.32 1.5-.97 1.82-1.82h3.13L15 14c-.47 2 1 3 3.5 3s4.06-1 3.5-3l-2.95-7H21V5h-6.17C14.4 3.8 13.27 3 12 3m0 2a1 1 0 0 1 1 1 1 1 0 0 1-1 1 1 1 0 0 1-1-1 1 1 0 0 1 1-1m-6.5 5.25L7 14H4zm13 0L20 14h-3z"/></symbol>
+<symbol id="i-hex" viewBox="0 0 24 24"><path d="M7 7c-1.1 0-2 .9-2 2v6a2 2 0 0 0 2 2h2c1.11 0 2-.89 2-2V9a2 2 0 0 0-2-2zm0 2h2v6H7zm10.6 8-2.1-2.1-2.1 2.1-1.4-1.4 2.1-2.1-2.1-2.1 1.4-1.4 2.1 2.1 2.1-2.1 1.4 1.4-2.1 2.1 2.1 2.1z"/></symbol>
+<symbol id="i-timeline" viewBox="0 0 24 24"><path d="M4 2v6H2V2zM2 22v-6h2v6zm3-10c0 1.11-.89 2-2 2a2 2 0 1 1 2-2m11-8c4.42 0 8 3.58 8 8s-3.58 8-8 8c-3.6 0-6.64-2.38-7.65-5.65L6 12l2.35-2.35C9.36 6.38 12.4 4 16 4m0 2c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6m-1 7V8h1.5v4.2l3 1.8-.82 1.26z"/></symbol>
+<symbol id="i-restart" viewBox="0 0 24 24"><path d="M12 4c2.1 0 4.1.8 5.6 2.3 3.1 3.1 3.1 8.2 0 11.3-1.8 1.9-4.3 2.6-6.7 2.3l.5-2c1.7.2 3.5-.4 4.8-1.7 2.3-2.3 2.3-6.1 0-8.5C15.1 6.6 13.5 6 12 6v4.6l-5-5 5-5zM6.3 17.6C3.7 15 3.3 11 5.1 7.9l1.5 1.5c-1.1 2.2-.7 5 1.2 6.8q.75.75 1.8 1.2l-.6 2q-1.5-.6-2.7-1.8"/></symbol>
+<symbol id="i-chip" viewBox="0 0 24 24"><path d="M6 4h12v1h3v2h-3v2h3v2h-3v2h3v2h-3v2h3v2h-3v1H6v-1H3v-2h3v-2H3v-2h3v-2H3V9h3V7H3V5h3zm5 11v3h1v-3zm2 0v3h1v-3zm2 0v3h1v-3z"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2m0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8m4.59-12.42L10 14.17l-2.59-2.58L6 13l4 4 8-8z"/></symbol>
+<symbol id="i-arrow" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></symbol>
+<symbol id="i-github" viewBox="0 0 512 512"><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></symbol>
+<symbol id="i-auto" viewBox="0 0 24 24"><path d="m14.3 16-.7-2h-3.2l-.7 2H7.8L11 7h2l3.2 9zM20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12zm-9.15 3.96h2.3L12 9z"/></symbol>
+<symbol id="i-light" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></symbol>
+<symbol id="i-dark" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></symbol>
+<symbol id="i-star" viewBox="0 0 24 24"><path d="M12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.62L12 2 9.19 8.62 2 9.24l5.45 4.73L5.82 21z"/></symbol>
+</svg>
+
+<a class="skip" href="#main">Skip to the content</a>
+
+<header class="top">
+  <div class="wrap bar">
+    <a class="brand" href="#top" aria-label="NexTerm, back to the top">
+      <svg viewBox="14 14 80 80" aria-hidden="true"><rect x="14" y="14" width="80" height="80" rx="18" fill="#16324F"/><path fill="#E6F1FB" d="M30,32h48a6,6 0 0 1 6,6v32a6,6 0 0 1 -6,6h-48a6,6 0 0 1 -6,-6v-32a6,6 0 0 1 6,-6z"/><path fill="#16324F" d="M28,42h52v26a4,4 0 0 1 -4,4h-44a4,4 0 0 1 -4,-4z"/><path fill="#5DCAA5" d="M35,49l3,-3 10,10 -10,10 -3,-3 7,-7z"/><path fill="#E6F1FB" d="M51,62h14v4h-14z"/><circle cx="32" cy="37" r="2" fill="#16324F"/><circle cx="38" cy="37" r="2" fill="#16324F"/></svg>
+      NexTerm
+    </a>
+    <nav class="nav" aria-label="Main">
+      <a href="#views">Features</a>
+      <a href="#adapters">Adapters</a>
+      <a href="{{ base_url }}/start/requirements/">Documentation</a>
+    </nav>
+    <div class="actions">
+      <button class="theme" type="button" data-mode="0" hidden aria-label="Switch the theme" title="Switch the theme">
+        <svg class="ic m0" aria-hidden="true"><use href="#i-auto"/></svg><svg class="ic m1" aria-hidden="true"><use href="#i-light"/></svg><svg class="ic m2" aria-hidden="true"><use href="#i-dark"/></svg>
+      </button>
+      <a class="gh" href="{{ config.repo_url }}" aria-label="NexTerm on GitHub"><svg class="ic" aria-hidden="true"><use href="#i-github"/></svg><span class="stars" hidden title="Stars on GitHub"><svg class="ic" aria-hidden="true"><use href="#i-star"/></svg><span data-stars>0</span></span></a>
+      <a class="btn sm" href="{{ config.repo_url }}/releases/latest">Download</a>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+
+<!-- ================= Hero ================= -->
+<section class="hero" aria-labelledby="hero-title">
+  <div class="wrap hero-grid">
+    <div>
+      <p class="badge"><b data-version>v0.1.0</b> Early version</p>
+      <h1 id="hero-title">Talk to your hardware <em>from your phone.</em></h1>
+      <p class="lead">NexTerm is a USB serial terminal for Android. Plug in an adapter or a development board with an OTG cable, read what it prints, send commands and watch the control lines.</p>
+      <div class="cta">
+        <a class="btn" href="{{ config.repo_url }}/releases/latest"><svg class="ic" aria-hidden="true"><use href="#i-download"/></svg>Download for Android</a>
+        <a class="btn ghost" href="{{ base_url }}/start/first-connection/">First connection<svg class="ic" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+      </div>
+      <ul class="fine">
+        <li><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Free and open source</li>
+        <li><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>No Internet permission</li>
+        <li><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Android 8.0 and newer</li>
+      </ul>
+    </div>
+
+    <div class="stage" role="group" aria-label="NexTerm on a tablet and on a phone">
+      <figure class="tablet" style="margin:0">
+        <img src="{{ base_url }}/guide/img/terminal-1-console-tablet.png" width="1400" height="875" alt="NexTerm on a tablet: the Console shows the boot messages of a board and its list of commands, with the saved commands on the right">
+      </figure>
+      <figure class="phone" style="margin:0">
+        <img src="{{ base_url }}/start/img/first-connection-3-session.png" width="600" height="1333" alt="NexTerm on a phone: the statistics of a session, with the bytes received and sent and a chart of the traffic">
+      </figure>
+    </div>
+  </div>
+</section>
+
+<!-- ================= Facts ================= -->
+<div class="facts">
+  <div class="wrap">
+    <ul>
+      <li><b>5 drivers</b><span>CH340, CP210x, FTDI, PL2303 and CDC-ACM</span></li>
+      <li><b>3 views</b><span>Console, Trace and Hex over the same data</span></li>
+      <li><b>300 to 1,500,000</b><span>baud, or any value you type</span></li>
+      <li><b>50,000 lines</b><span>of scrollback, at most</span></li>
+    </ul>
+  </div>
+</div>
+
+<!-- ================= Views ================= -->
+<section class="sec" id="views" aria-labelledby="views-title">
+  <div class="wrap">
+    <div class="tabs">
+      <input type="radio" name="v" id="v1" checked aria-label="Console">
+      <input type="radio" name="v" id="v2" aria-label="Trace">
+      <input type="radio" name="v" id="v3" aria-label="Hex">
+      <div class="views views-grid">
+        <div>
+        <div class="head" style="margin-bottom:28px">
+          <p class="eyebrow">One stream, three views</p>
+          <h2 id="views-title">Read it the way the problem needs.</h2>
+          <p class="sub">All three views are drawn from the same record of the session, so switching never loses a byte.</p>
+        </div>
+        <div class="tablist" role="group" aria-label="Choose a view">
+          <label for="v1"><strong><svg class="ic" aria-hidden="true"><use href="#i-terminal"/></svg>Console</strong><span>A real VT100/ANSI terminal: colours, bold, cursor movement and full-screen programs. A Linux shell on a board feels like it does on a computer.</span></label>
+          <label for="v2"><strong><svg class="ic" aria-hidden="true"><use href="#i-timeline"/></svg>Trace</strong><span>One line for each message, with a blue arrow for what you sent, a green one for what you received, and the time between them.</span></label>
+          <label for="v3"><strong><svg class="ic" aria-hidden="true"><use href="#i-hex"/></svg>Hex</strong><span>The bytes in hexadecimal with their text beside them, as many to a row as fit, and a field that sends raw bytes.</span></label>
+        </div>
+        </div>
+        <div class="shots">
+          <figure class="phone p1" style="margin:0"><img src="{{ base_url }}/start/img/first-connection-4-console.png" width="600" height="1333" loading="lazy" alt="The Console view on a phone, with the list of commands of a device printed in colour"></figure>
+          <figure class="phone p2" style="margin:0"><img src="{{ base_url }}/guide/img/terminal-3-trace.png" width="600" height="1333" loading="lazy" alt="The Trace view on a phone: received messages with a green arrow, sent commands with a blue arrow, and the time between messages"></figure>
+          <figure class="phone p3" style="margin:0"><img src="{{ base_url }}/guide/img/terminal-4-hex.png" width="600" height="1333" loading="lazy" alt="The Hex view on a phone: rows of bytes in hexadecimal with their text on the right, and a field for raw bytes"></figure>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= Adapter details ================= -->
+<section class="sec alt" id="details" aria-labelledby="details-title">
+  <div class="wrap row rev">
+    <div class="copy">
+      <p class="eyebrow">Adapter details</p>
+      <h2 id="details-title">Know exactly what you plugged in.</h2>
+      <p class="sub">Tap any adapter in the list and its whole identity unfolds, before you even connect.</p>
+      <ul class="list">
+        <li><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg><span><b>Who it says it is.</b> Manufacturer, product and serial number, as the chip reports them.</span></li>
+        <li><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg><span><b>Where it is.</b> The VID:PID of its model and the path Android gave it.</span></li>
+        <li><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg><span><b>How NexTerm talks to it.</b> The driver in use, and whether it was detected, added by NexTerm or chosen by you.</span></li>
+        <li><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg><span><b>What it can do.</b> The control lines and the flow control modes that driver supports.</span></li>
+        <li><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg><span><b>Where it stands.</b> Whether the USB permission is granted, and the profile it will connect with.</span></li>
+      </ul>
+      <p class="aside">A chip NexTerm does not recognise? Choose its driver yourself, once, for every profile of that model.</p>
+    </div>
+    <div class="visual">
+      <figure class="phone single" style="margin:0"><img src="{{ base_url }}/guide/img/interface-1-adapter-details.png" width="600" height="1333" loading="lazy" alt="The details of an adapter in NexTerm on a phone: profile, manufacturer, product, serial number, VID:PID, path, driver, control lines, flow control and USB permission, with a button to change the driver"></figure>
+    </div>
+  </div>
+</section>
+
+<!-- ================= Macros ================= -->
+<section class="sec" id="macros" aria-labelledby="macros-title">
+  <div class="wrap row wv">
+    <div class="copy">
+      <p class="eyebrow">Saved commands</p>
+      <h2 id="macros-title">Your macros, one tap away.</h2>
+      <p class="sub">Keep the commands you type again and again. Tap one to send it, tap the pencil to change it.</p>
+      <ul class="list">
+        <li><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg><span><b>Text or raw bytes.</b> Give each one a name and say whether it is text or hex bytes.</span></li>
+        <li><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg><span><b>Its own line ending.</b> The session default, CR, LF, CR+LF or none, command by command.</span></li>
+        <li><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg><span><b>Always at hand.</b> One list for every profile, open from the Console, Trace and Hex.</span></li>
+      </ul>
+      <div class="mini" aria-label="An example of raw bytes">
+        <div><span class="dim">you write </span> 01 03 <span class="rx">"OK"</span> 0D 0A</div>
+        <div><span class="dim">it sends  </span> 01 03 <span class="rx">4F 4B</span> 0D 0A</div>
+      </div>
+    </div>
+    <div class="visual pair">
+      <figure class="phone" style="margin:0"><img src="{{ base_url }}/guide/img/sending-2-commands.png" width="600" height="1333" loading="lazy" alt="The saved commands of NexTerm on a phone: Version, Colours and Sensor stream, each with a button to edit it, and the link New command"></figure>
+      <figure class="phone" style="margin:0"><img src="{{ base_url }}/guide/img/sending-1-editor.png" width="600" height="1333" loading="lazy" alt="The editor of a saved command on a phone, with its name, the command, how to send it and its line ending"></figure>
+    </div>
+  </div>
+</section>
+
+<!-- ================= Full screen ================= -->
+<section class="sec alt" id="fullscreen" aria-labelledby="fullscreen-title">
+  <div class="wrap">
+    <div class="head center">
+      <p class="eyebrow">Full screen</p>
+      <h2 id="fullscreen-title">Give the terminal the whole screen.</h2>
+      <p class="sub">One round button hides the header and the bars: all the lines, none of the chrome.</p>
+    </div>
+    <div class="fs-devices" role="group" aria-label="NexTerm in full screen on a tablet and on a phone">
+      <figure class="tablet" style="margin:0"><img src="{{ base_url }}/guide/img/terminal-5-fullscreen-tablet.png" width="1400" height="875" loading="lazy" alt="NexTerm in full screen on a tablet: a program of the device fills the whole window, with only a round button over it"></figure>
+      <figure class="phone" style="margin:0"><img src="{{ base_url }}/guide/img/terminal-5-fullscreen.png" width="600" height="1333" loading="lazy" alt="NexTerm in full screen on a phone: a program of the device fills the whole window, with only a round button over it"></figure>
+    </div>
+    <ul class="points">
+      <li><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg><span><b>Drag it out of the way.</b> The button goes anywhere over the terminal, and NexTerm remembers its place for each orientation.</span></li>
+      <li><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg><span><b>The same button brings it all back.</b> Nothing to learn, no gesture to remember.</span></li>
+      <li><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg><span><b>Fit more in.</b> Pinch to zoom from 7 to 24 sp, and the screen stays on during a session.</span></li>
+    </ul>
+  </div>
+</section>
+
+<!-- ================= Settings ================= -->
+<section class="sec" id="settings" aria-labelledby="settings-title">
+  <div class="wrap row rev wv">
+    <div class="copy">
+      <p class="eyebrow">Settings</p>
+      <h2 id="settings-title">Tune it to the way you work.</h2>
+      <p class="sub">A few short sections: a list of pages on a phone, two columns on a wide screen.</p>
+      <ul class="list">
+        <li><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg><span><b>Terminal.</b> Text size from 7 to 24 sp with a live sample, Local echo, Autoscroll, Scrollback from 1,000 to 50,000 lines, and the extra keys you want in the row.</span></li>
+        <li><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg><span><b>Connection.</b> Auto-reconnect, going straight to the terminal after Connect, and the state of DTR and RTS when the port opens.</span></li>
+        <li><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg><span><b>App.</b> Show or hide the bar of the control lines and the names under the icons.</span></li>
+      </ul>
+    </div>
+    <div class="visual pair">
+      <figure class="phone" style="margin:0"><img src="{{ base_url }}/guide/img/settings-2-terminal.png" width="600" height="1333" loading="lazy" alt="The Terminal settings of NexTerm on a phone: text size with a slider and a sample, Local echo, Autoscroll, Scrollback, Keep screen on and the extra keys"></figure>
+      <figure class="phone" style="margin:0"><img src="{{ base_url }}/guide/img/settings-3-connection.png" width="600" height="1333" loading="lazy" alt="The Connection settings of NexTerm on a phone: Auto-reconnect, Open terminal after Connect, and the initial state of DTR and RTS"></figure>
+    </div>
+  </div>
+</section>
+
+<!-- ================= The rest of the toolbox ================= -->
+<section class="sec alt" id="more" aria-labelledby="more-title">
+  <div class="wrap">
+    <div class="head center">
+      <p class="eyebrow">And the rest of the toolbox</p>
+      <h2 id="more-title">Small things that save the day at the bench.</h2>
+    </div>
+    <div class="bento">
+      <article class="card">
+        <div class="ico"><svg class="ic" aria-hidden="true"><use href="#i-pulse"/></svg></div>
+        <h3>Control lines in reach</h3>
+        <p>Toggle DTR and RTS, watch CTS, DSR, CD and RI, send a BREAK. Choose their state when the port opens: some boards reset when it changes.</p>
+        <div class="pills" aria-hidden="true">
+          <span class="pill on"><i></i>DTR</span><span class="pill"><i></i>RTS</span><span class="pill on"><i></i>CTS</span><span class="pill on"><i></i>DSR</span><span class="pill"><i></i>CD</span><span class="pill"><i></i>RI</span>
+        </div>
+      </article>
+      <article class="card">
+        <div class="ico"><svg class="ic" aria-hidden="true"><use href="#i-tune"/></svg></div>
+        <h3>Profiles that remember</h3>
+        <p>Baud rate, data bits, parity, stop bits, flow control and line ending, saved for each adapter. Connect with one tap, and let Auto-reconnect resume the session after an unplug.</p>
+      </article>
+      <article class="card">
+        <div class="ico"><svg class="ic" aria-hidden="true"><use href="#i-timeline"/></svg></div>
+        <h3>The session at a glance</h3>
+        <p>How long it has lasted, the bytes received and sent, the speed, the errors, and a chart of the last minute of traffic.</p>
+      </article>
+      <article class="card">
+        <div class="ico"><svg class="ic" aria-hidden="true"><use href="#i-devices"/></svg></div>
+        <h3>A layout for each screen</h3>
+        <p>A bottom bar on a phone, a rail and a dock of commands on a tablet, in portrait or landscape.</p>
+      </article>
+      <article class="card">
+        <div class="ico"><svg class="ic" aria-hidden="true"><use href="#i-hex"/></svg></div>
+        <h3>Made for fingers</h3>
+        <p>A row of extra keys for ESC, TAB, CTRL and the arrows, with Ctrl and Alt that stay down for one key.</p>
+      </article>
+      <article class="card">
+        <div class="ico"><svg class="ic" aria-hidden="true"><use href="#i-restart"/></svg></div>
+        <h3>It keeps running</h3>
+        <p>An open session stays alive while you use another app, with a notification that lets you disconnect.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ================= Adapters ================= -->
+<section class="sec" id="adapters" aria-labelledby="adapters-title">
+  <div class="wrap">
+    <div class="head">
+      <p class="eyebrow">Adapters and boards</p>
+      <h2 id="adapters-title">The chips you already have in the drawer.</h2>
+      <p class="sub">NexTerm picks the driver from the VID:PID of the adapter. Boards with a USB port of their own work too, as long as they show up as a serial port.</p>
+    </div>
+    <div class="chips">
+      <div class="chip"><svg class="ic" aria-hidden="true"><use href="#i-chip"/></svg><b>CH340 / CH341</b><span>Cheap adapters and many clone boards</span></div>
+      <div class="chip"><svg class="ic" aria-hidden="true"><use href="#i-chip"/></svg><b>CP2102 / CP2104</b><span>Silicon Labs CP210x family</span></div>
+      <div class="chip"><svg class="ic" aria-hidden="true"><use href="#i-chip"/></svg><b>FTDI</b><span>FT232R, FT2232 and FT231X, with several ports</span></div>
+      <div class="chip"><svg class="ic" aria-hidden="true"><use href="#i-chip"/></svg><b>PL2303</b><span>Prolific adapters</span></div>
+      <div class="chip"><svg class="ic" aria-hidden="true"><use href="#i-chip"/></svg><b>CDC-ACM</b><span>Native USB of the ESP32-S2 and S3, Arduino and STM32</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= Principles ================= -->
+<section class="sec alt" aria-labelledby="open-title">
+  <div class="wrap">
+    <div class="head center">
+      <p class="eyebrow">Open and private</p>
+      <h2 id="open-title">Yours to inspect, and nobody else's to read.</h2>
+    </div>
+    <div class="two">
+      <article class="card">
+        <div class="ico"><svg class="ic" aria-hidden="true"><use href="#i-scale"/></svg></div>
+        <h3>Free software</h3>
+        <p>NexTerm is released under the GNU General Public License v3. Read the code, build it yourself, report a problem or send a fix on GitHub.</p>
+      </article>
+      <article class="card">
+        <div class="ico"><svg class="ic" aria-hidden="true"><use href="#i-privacy"/></svg></div>
+        <h3>Private by design</h3>
+        <p>The app does not ask for the Internet permission, so it cannot send anything off your device. Your profiles, commands and settings stay on it.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ================= Final call ================= -->
+<section class="sec" aria-labelledby="get-title">
+  <div class="wrap">
+    <div class="final">
+      <h2 id="get-title">Get NexTerm</h2>
+      <p class="sub">Download the APK from GitHub and open it on your phone or tablet. It needs Android 8.0 or newer, USB host support and an OTG cable.</p>
+      <div class="cta">
+        <a class="btn" href="{{ config.repo_url }}/releases/latest"><svg class="ic" aria-hidden="true"><use href="#i-download"/></svg>Download the latest APK</a>
+        <a class="btn ghost" href="{{ base_url }}/start/install/">Read the install guide</a>
+        <a class="btn ghost" href="{{ config.repo_url }}"><svg class="ic" aria-hidden="true"><use href="#i-github"/></svg>Star on GitHub<span class="stars" hidden><svg class="ic" aria-hidden="true"><use href="#i-star"/></svg><span data-stars>0</span></span></a>
+      </div>
+      <small>Free software, GNU GPL v3 · Latest release <span class="ver" data-version>v0.1.0</span> · Not on an app store yet</small>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot">
+      <div>
+        <a class="brand" href="#top">NexTerm</a>
+        <p>A USB serial terminal for Android. Free software under the GNU General Public License v3.</p>
+      </div>
+      <div>
+        <h4>Documentation</h4>
+        <ul>
+          <li><a href="{{ base_url }}/start/requirements/">Getting started</a></li>
+          <li><a href="{{ base_url }}/guide/interface/">User guide</a></li>
+          <li><a href="{{ base_url }}/reference/adapters/">Adapters and drivers</a></li>
+          <li><a href="{{ base_url }}/reference/troubleshooting/">Troubleshooting</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Project</h4>
+        <ul>
+          <li><a href="{{ config.repo_url }}">Source code</a></li>
+          <li><a href="{{ config.repo_url }}/releases/latest">Releases</a></li>
+          <li><a href="{{ config.repo_url }}/issues">Report a problem</a></li>
+          <li><a href="{{ config.repo_url }}/blob/main/LICENSE">License</a></li>
+        </ul>
+      </div>
+    </div>
+    <p class="legal">{{ config.copyright }}. The names of chips and boards belong to their respective owners and are used here only to say what NexTerm works with; NexTerm is not affiliated with or endorsed by them. Icons: Material Design Icons (Apache 2.0) and Font Awesome Free (CC BY 4.0).</p>
+  </div>
+</footer>
+
+</body>
+</html>
